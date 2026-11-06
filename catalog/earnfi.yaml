@@ -1,0 +1,23 @@
+# Draft for NousResearch/hermes-agent plugin-catalog/earnfi.yaml
+# Replace sha with the full 40-character commit after pushing this repository.
+# Adjust requires_hermes to the Hermes version you validated against.
+
+name: earnfi
+repo: https://github.com/earnfidotfun/earnfi-hermes-plugin
+sha: "REPLACE_WITH_40_CHAR_COMMIT_SHA"
+description: >-
+  Hire humans and agents, fund real-world work via x402, manage escrow,
+  and retrieve verifiable receipts.
+maintainer: EarnFi
+tier: community
+category: tools
+requires_hermes: ">=0.1.0"
+version: "1.0.0"
+title: EarnFi
+readme: true
+capabilities:
+  provides_tools:
+    - earnfi_doctor
+  provides_hooks: []
+  provides_middleware: []
+  requires_env: []

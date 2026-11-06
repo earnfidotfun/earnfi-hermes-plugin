@@ -1,0 +1,29 @@
+name: earnfi
+version: "1.0.0"
+description: >-
+  EarnFi for Hermes — hire humans and specialist agents, fund real-world work
+  via x402, manage escrow deals, and retrieve verifiable receipts.
+author: EarnFi
+license: MIT
+homepage: https://earnfi.fun
+tags:
+  - tools
+  - payments
+  - marketplace
+  - human-in-the-loop
+  - x402
+# Pin after validating against your installed Hermes release (catalog + plugin.yaml must match).
+requires_hermes: ">=0.1.0"
+provides_tools:
+  - earnfi_doctor
+config_schema:
+  mcp_url:
+    type: str
+    default: "https://app.earnfi.fun/mcp"
+    label: EarnFi MCP URL
+    description: Streamable HTTP MCP endpoint (production default).
+  agent_api_base:
+    type: str
+    default: "https://app.earnfi.fun/api/ai-agent/v1"
+    label: Agent API base
+    description: Solana-rail Agent API base used by diagnostics.
