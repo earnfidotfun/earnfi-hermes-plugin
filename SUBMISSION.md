@@ -20,7 +20,7 @@ Track status separately: **implemented** · **tested** · **verified** · **subm
 | X demo &lt;90s + `@NousResearch` | pending | See `docs/DEMO.md` |
 | Typeform | pending | https://form.typeform.com/to/FwJLvOln |
 
-**Local commit SHA (pre-push):** `9f91725479e660f76acbdea35a07bef353f73e9b`
+**Local commit SHA (pre-push):** `d79d8627986d48bd5941b91590c027a6cd647d70` (update again after any further commits before catalog PR)
 
 ## Catalog entry draft
 
