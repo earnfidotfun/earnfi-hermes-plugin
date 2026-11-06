@@ -4,21 +4,23 @@ Track status separately: **implemented** · **tested** · **verified** · **subm
 
 | Deliverable | Status | Evidence |
 |-------------|--------|----------|
-| Public repo `earnfidotfun/earnfi-hermes-plugin` | implemented (local) | This tree; GitHub publish pending `gh auth` |
+| Public repo `earnfidotfun/earnfi-hermes-plugin` | implemented (local) | Local git ready; GitHub publish blocked — run `gh auth login` then create/push |
 | Native `plugin.yaml` + `__init__.py` | implemented | Root files |
 | `mcp.json` streamable-http + trust via `plugin.json` | implemented | Manifests |
 | Commands `/earnfi` `/earnfi-help` `/earnfi-status` `/earnfi-smoke` | implemented | `hermes_commands/` |
-| Doctor + smoke (live HTTP) | tested (offline suite) | `python -m tests…` / doctor module |
+| Doctor + smoke (live HTTP) | verified | `node scripts/node-verify.mjs` — 135 tools, catalog/rails 200 |
 | Hermes workflow skills (11) | implemented | `skills/` |
 | CAPABILITIES inventory (135 tools) | verified against live card | `docs/CAPABILITIES.md` |
 | Docs + SECURITY disclosure | implemented | `docs/` |
-| Automated unit tests | tested | `tests/` |
+| Automated unit tests | implemented | `tests/` (CPython missing on build host; use `node-verify` + install Python to run unittest) |
 | `hermes plugins validate` | pending | Hermes CLI not installed on build machine |
 | Real Hermes install + MCP discovery | pending | Requires Hermes runtime |
 | Real funded E2E + receipt | pending | Requires wallet + worker |
-| Catalog PR `plugin-catalog/earnfi.yaml` | pending | Needs public SHA |
+| Catalog PR `plugin-catalog/earnfi.yaml` | pending | Draft in `catalog/earnfi.yaml`; pin SHA after push |
 | X demo &lt;90s + `@NousResearch` | pending | See `docs/DEMO.md` |
 | Typeform | pending | https://form.typeform.com/to/FwJLvOln |
+
+**Local commit SHA (pre-push):** `9f91725479e660f76acbdea35a07bef353f73e9b`
 
 ## Catalog entry draft
 
