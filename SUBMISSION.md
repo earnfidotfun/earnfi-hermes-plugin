@@ -20,7 +20,7 @@ Track status separately: **implemented** · **tested** · **verified** · **subm
 | X demo &lt;90s + `@NousResearch` | pending | See `docs/DEMO.md` |
 | Typeform | pending | https://form.typeform.com/to/FwJLvOln |
 
-**Local commit SHA (pre-push):** `d79d8627986d48bd5941b91590c027a6cd647d70` (update again after any further commits before catalog PR)
+**HEAD before publish:** run `git rev-parse HEAD` after the final push and paste that 40-char SHA into `catalog/earnfi.yaml` before opening the Nous PR.
 
 ## Catalog entry draft
 

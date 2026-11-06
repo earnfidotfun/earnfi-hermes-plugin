@@ -4,7 +4,8 @@
 
 name: earnfi
 repo: https://github.com/earnfidotfun/earnfi-hermes-plugin
-sha: "d79d8627986d48bd5941b91590c027a6cd647d70"
+# Set to `git rev-parse HEAD` on the commit you push for catalog review (must be full 40 hex).
+sha: "f221a51322b7001b63a0282ef0e44b4ac6310b8e"
 description: >-
   Hire humans and agents, fund real-world work via x402, manage escrow,
   and retrieve verifiable receipts.
