@@ -19,7 +19,7 @@ class SecurityTests(unittest.TestCase):
     def test_trust_untrusted(self):
         data = json.loads((ROOT / "plugin.json").read_text(encoding="utf-8"))
         self.assertEqual(
-            data["extensions"]["com.nousresearch.hermes"]["servers"]["earnfi"]["trust"],
+            data["extensions"]["com.nousresearch.hermes"]["servers"]["earnfi-api"]["trust"],
             "untrusted",
         )
 

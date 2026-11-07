@@ -8,9 +8,11 @@
 
 ## MCP tools missing
 
-- Confirm `mcp.json` uses `type: streamable-http` and `https://app.earnfi.fun/mcp`
-- Check for server name conflicts in user `config.yaml` `mcp_servers`
-- Re-enable the plugin after config changes
+- Confirm `mcp.json` uses server key **`earnfi-api`**, `type: streamable-http`, URL `https://app.earnfi.fun/mcp`
+- Do **not** name the MCP server `earnfi` — that collides with the native plugin toolset; chat will only see `earnfi_doctor`
+- In `config.yaml`, use `mcp_servers.earnfi-api` (not `earnfi`). Raise `mcp_single_query_discovery_timeout` (≥60) or set `lazy: true` if oneshot sessions start before the ~20s cold connect finishes
+- Re-enable / reload MCP after config changes (`/reload-mcp` or new session)
+- Hermes tool names look like `mcp__earnfi_api__earnfi_payment_rails` (hyphens → underscores)
 
 ## `/earnfi-status` failures
 

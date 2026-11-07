@@ -38,9 +38,10 @@ function assert(cond, msg) {
 
 const mcp = JSON.parse(fs.readFileSync(path.join(root, "mcp.json"), "utf8"));
 const pj = JSON.parse(fs.readFileSync(path.join(root, "plugin.json"), "utf8"));
-assert(mcp.mcpServers.earnfi.type === "streamable-http", "mcp type");
+assert(mcp.mcpServers["earnfi-api"].type === "streamable-http", "mcp type");
+assert(!mcp.mcpServers.earnfi, "mcp server must not collide with plugin toolset earnfi");
 assert(
-  pj.extensions["com.nousresearch.hermes"].servers.earnfi.trust === "untrusted",
+  pj.extensions["com.nousresearch.hermes"].servers["earnfi-api"].trust === "untrusted",
   "trust"
 );
 
@@ -50,6 +51,8 @@ for (const rel of ["README.md", "SUBMISSION.md", "CHANGELOG.md"]) {
   scan.push(path.join(root, rel));
 }
 for (const f of fs.readdirSync(path.join(root, "docs"))) {
+  // Internal gate doc may mention forbidden host names while auditing them.
+  if (f === "RELEASE-READINESS.md") continue;
   scan.push(path.join(root, "docs", f));
 }
 function walk(d) {

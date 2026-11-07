@@ -20,11 +20,13 @@ Do **not** put API keys, agent tokens, or wallet secrets in `mcp.json`.
 "extensions": {
   "com.nousresearch.hermes": {
     "servers": {
-      "earnfi": { "trust": "untrusted" }
+      "earnfi-api": { "trust": "untrusted" }
     }
   }
 }
 ```
+
+The MCP server key is **`earnfi-api`**, not `earnfi`. The native plugin toolset is already named `earnfi` (`earnfi_doctor`). Reusing `earnfi` for MCP makes Hermes resolve only the doctor tool and never surface `mcp__earnfi-api__*` tools to the model.
 
 Effect: MCP tools without `readOnlyHint: true` require user approval (Once / Session / Always). Unattended runs fail closed.
 

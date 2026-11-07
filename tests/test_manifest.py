@@ -19,20 +19,26 @@ class ManifestTests(unittest.TestCase):
 
     def test_mcp_json_streamable_http(self):
         data = json.loads((ROOT / "mcp.json").read_text(encoding="utf-8"))
-        server = data["mcpServers"]["earnfi"]
+        server = data["mcpServers"]["earnfi-api"]
         self.assertEqual(server["type"], "streamable-http")
         self.assertEqual(server["url"], "https://app.earnfi.fun/mcp")
         self.assertNotIn("http", server["type"].replace("streamable-http", ""))
+        # Must not collide with native plugin toolset name `earnfi`
+        self.assertNotIn("earnfi", data["mcpServers"])
 
     def test_plugin_json_trust_extension(self):
         data = json.loads((ROOT / "plugin.json").read_text(encoding="utf-8"))
-        trust = data["extensions"]["com.nousresearch.hermes"]["servers"]["earnfi"]["trust"]
+        trust = data["extensions"]["com.nousresearch.hermes"]["servers"]["earnfi-api"]["trust"]
         self.assertEqual(trust, "untrusted")
         self.assertEqual(data["repository"], "https://github.com/earnfidotfun/earnfi-hermes-plugin")
 
     def test_no_cursor_branding_in_user_docs(self):
         banned = re.compile(r"\bCursor\b", re.I)
-        paths = list((ROOT / "docs").glob("*.md")) + [
+        paths = [
+            p
+            for p in (ROOT / "docs").glob("*.md")
+            if p.name != "RELEASE-READINESS.md"
+        ] + [
             ROOT / "README.md",
             ROOT / "SUBMISSION.md",
         ]

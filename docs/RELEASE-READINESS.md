@@ -2,12 +2,12 @@
 
 **Date:** 2026-11-06  
 **Package:** EarnFi for Hermes (local)  
-**Updated:** 2026-11-07 (Hermes Desktop v0.23.0 installed locally)  
-**Decision:** **Hermes-validated for native shell; not yet hackathon-complete.**  
-**Progress:** `validate` / `doctor` pass; plugin enabled; all four slash commands work in real Hermes sessions.  
-**Still open:** in-session MCP tool exposure + write approval UX + funded E2E settlement; public GitHub + catalog PR + demo.
+**Updated:** 2026-11-07 (Hermes Desktop v0.23.0; MCP model-facing call verified)  
+**Decision:** **Hermes-validated for native shell + MCP tool loop; not yet hackathon-complete.**  
+**Progress:** `validate` / `doctor` pass; plugin enabled; slash commands OK; live chat called `mcp__earnfi_api__earnfi_payment_rails` and returned real rails JSON.  
+**Still open:** interactive Once/Session/Always approval UI demo + funded E2E settlement; public GitHub + catalog PR + demo.
 
-Do **not** open the Nous catalog PR until MCP-in-Hermes + (ideally) a real micro-payment pass and this report is approved for publish.
+Do **not** open the Nous catalog PR until (ideally) a real micro-payment pass and this report is approved for publish.
 
 ---
 
@@ -26,8 +26,9 @@ Do **not** open the Nous catalog PR until MCP-in-Hermes + (ideally) a real micro
 | `hermes plugins doctor . --ci` | Runtime discovery/import/registration OK | **Pass** |
 | Plugin enable | `hermes plugins enable earnfi` — enabled | **Pass** |
 | `/earnfi` `/earnfi-help` `/earnfi-status` `/earnfi-smoke` | Live Hermes chat oneshot — all OK, 135 tools in doctor | **Pass** |
-| In-Hermes MCP tool calls (model-facing) | Not yet exercised via agent tool loop | **Open** |
-| Approval UX (read vs write vs paid) | Not demonstrated in Hermes UI | **Open** |
+| In-Hermes MCP tool calls (model-facing) | Nous oneshot: `tool_search` → `mcp__earnfi_api__earnfi_payment_rails` → live rails JSON (`solana-usdc-x402`, `okx-xlayer-usdt0`) | **Pass** |
+| MCP server naming | Must be `earnfi-api` (not `earnfi`) — same-name collision with plugin toolset hid all MCP tools | **Fixed** |
+| Approval UX (read vs write vs paid) | Non-interactive oneshot: write tool `earnfi_manual_create` fail-closed under `trust: untrusted` (“user did not approve… NOT run”). Interactive Once/Session/Always UI not filmed yet | **Partial** |
 | Real funded workflow + settlement + receipt | Not run | **Open** |
 | Public GitHub + catalog PR + demo + Typeform | Intentionally held | Pending approval |
 
@@ -43,17 +44,17 @@ Official Hermes portable packages place Hermes-only fields under:
 
 Our layout:
 
-- `mcp.json` — `earnfi` server, `type: streamable-http`, URL only  
-- `plugin.json` — `servers.earnfi.trust: "untrusted"` (server name matches `mcp.json`)
+- `mcp.json` — `earnfi-api` server (not `earnfi` — avoids plugin toolset shadow), `type: streamable-http`, URL only  
+- `plugin.json` — `servers.earnfi-api.trust: "untrusted"` (server name matches `mcp.json`)
 
 Expected host behaviour once Hermes loads the package:
 
 | Tool annotation | Under `trust: untrusted` |
 |-----------------|---------------------------|
-| `readOnlyHint: true` | No approval prompt |
-| Write / paid (no readOnlyHint) | Approval required (Once / Session / Always); fail-closed unattended |
+| `readOnlyHint: true` | No approval prompt (verified: `earnfi_payment_rails`) |
+| Write / paid (no readOnlyHint) | Approval required; fail-closed unattended (verified: `earnfi_manual_create` denied in oneshot) |
 
-**Not yet demonstrated** in a live Hermes session. Backend settlement rules remain authoritative regardless of Hermes approval.
+Backend settlement rules remain authoritative regardless of Hermes approval. Interactive approval UI still worth capturing in the demo.
 
 ---
 
@@ -79,9 +80,10 @@ Repository-wide search for `Cursor` / `cursor`:
 
 ## 5. MCP tool inventory vs Hermes exposure
 
-- **Remote inventory:** 135 tools on live server card (see `docs/CAPABILITIES.md`, `tests/fixtures/tool_inventory.json`).
-- **Hermes exposure:** **Not verified.** Remote HTTP ≠ Hermes MCP session `tools/list`.
-- After Hermes install, require: enable plugin → list MCP tools named `earnfi` → spot-check read tools → spot-check one write tool triggers approval.
+- **Remote inventory:** 135 tools on live server card (see `docs/CAPABILITIES.md`, `tests/fixtures/tool_inventory.json`); `hermes mcp test earnfi-api` discovers **137** (card + utility wrappers).
+- **Hermes exposure:** **Verified** after renaming MCP server to `earnfi-api`. With the old name `earnfi`, tool_search deferred only ~7 tools (doctor path); after rename, deferred catalog jumped to **144** and the model invoked `mcp__earnfi_api__earnfi_payment_rails`.
+- **Local host tips:** `mcp_single_query_discovery_timeout: 90`, `mcp_servers.earnfi-api.lazy: true`, `connect_timeout: 90` (cold connect can exceed the default 15s oneshot wait).
+- Write gate: non-interactive call to `mcp__earnfi_api__earnfi_manual_create` was denied by the MCP trust gate (fail-closed). Interactive approval UI still open for the demo reel.
 
 ---
 
