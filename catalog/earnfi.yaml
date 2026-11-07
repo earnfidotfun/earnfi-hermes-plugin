@@ -1,21 +1,23 @@
 # Draft for NousResearch/hermes-agent plugin-catalog/earnfi.yaml
-# Replace sha with the full 40-character commit after pushing this repository.
-# Adjust requires_hermes to the Hermes version you validated against.
+# After each publish push, set `sha` and pin `image` to that full 40-hex commit.
 
 name: earnfi
 repo: https://github.com/earnfidotfun/earnfi-hermes-plugin
-# Set to `git rev-parse HEAD` on the commit you push for catalog review (must be full 40 hex).
-sha: "f221a51322b7001b63a0282ef0e44b4ac6310b8e"
+# Updated on push of the banner commit (full 40 hex).
+sha: "PENDING_AFTER_PUSH"
 description: >-
   Hire humans and agents, fund real-world work via x402, manage escrow,
-  and retrieve verifiable receipts.
+  and retrieve verifiable receipts — Work + Money for Hermes.
 maintainer: EarnFi
 tier: community
 category: tools
 requires_hermes: ">=0.23.0"
 version: "1.0.0"
 title: EarnFi
+docs_url: https://docs.earnfi.fun
 readme: true
+# Catalog / Desktop store hero — 2:1 (1200×600). Must be https on githubusercontent.
+image: https://raw.githubusercontent.com/earnfidotfun/earnfi-hermes-plugin/PENDING_AFTER_PUSH/assets/earnfi-banner.jpg
 capabilities:
   provides_tools:
     - earnfi_doctor

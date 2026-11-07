@@ -1,5 +1,14 @@
 # Configuration
 
+## Branding (Desktop / catalog)
+
+| Asset | Path | Spec |
+|-------|------|------|
+| Logo / icon | `assets/logo.png` | Square mark (`plugin.json` → `logo`) |
+| Catalog banner | `assets/earnfi-banner.jpg` | **2:1** (1200×600), brand blues `#1585EE` / `#0449B0` / `#1E2D93` |
+
+Catalog cards and the official plugin page hero use `catalog/earnfi.yaml` → `title: EarnFi` + `image:` (pinned raw.githubusercontent.com URL). Install-from-Git still shows the machine id `earnfi` until the catalog entry is published.
+
 ## MCP
 
 `mcp.json` points Hermes at:
