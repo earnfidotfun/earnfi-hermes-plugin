@@ -2,10 +2,12 @@
 
 **Date:** 2026-11-06  
 **Package:** EarnFi for Hermes (local)  
-**Decision:** **Not release-ready for catalog / hackathon submission yet.**  
-**Reason:** Hermes CLI not installed on this machine; approval behaviour, in-Hermes MCP tool exposure, and funded E2E settlement are **unverified**.
+**Updated:** 2026-11-07 (Hermes Desktop v0.23.0 installed locally)  
+**Decision:** **Hermes-validated for native shell; not yet hackathon-complete.**  
+**Progress:** `validate` / `doctor` pass; plugin enabled; all four slash commands work in real Hermes sessions.  
+**Still open:** in-session MCP tool exposure + write approval UX + funded E2E settlement; public GitHub + catalog PR + demo.
 
-Do **not** push the public repo or open the Nous catalog PR until the blockers below are cleared and this report is approved.
+Do **not** open the Nous catalog PR until MCP-in-Hermes + (ideally) a real micro-payment pass and this report is approved for publish.
 
 ---
 
@@ -13,17 +15,20 @@ Do **not** push the public repo or open the Nous catalog PR until the blockers b
 
 | Area | Evidence | Status |
 |------|----------|--------|
-| Independent Hermes package | Local git repo `earnfi-hermes-plugin` | Done |
+| Independent Hermes package | Local git + junction at `%LOCALAPPDATA%\hermes\plugins\earnfi` | Done |
 | Native structure | `plugin.yaml`, `__init__.py`, commands, doctor | Done |
-| Remote MCP discovery | Server card 135 tools v1.9.0; catalog/rails HTTP 200 | Remotely verified |
+| Remote MCP discovery | Server card 135 tools v1.9.0; catalog/rails HTTP 200 | Verified |
 | Cursor branding (repo-wide) | Only anti-Cursor *guards* in tests/scripts; no product copy | Pass |
-| Trust config shape | Matches official portable `plugin.json` extensions | Spec-aligned (runtime unproven) |
+| Trust config shape | `plugin.json` → `trust: untrusted` | Spec-aligned |
 | Catalog draft | `catalog/earnfi.yaml` (internal) | Draft only |
 | Official catalog path | Must be `plugin-catalog/earnfi.yaml` on `NousResearch/hermes-agent` | Understood; not submitted |
-| `hermes plugins validate/doctor` | Hermes CLI missing | **Blocker** |
-| In-Hermes slash commands + MCP tools | Not run in Hermes | **Blocker** |
-| Approval UX (read vs write vs paid) | Not demonstrated in Hermes | **Blocker** |
-| Real funded workflow + settlement + receipt | Not run | **Blocker** |
+| `hermes plugins validate --install-deps` | Passed on Hermes v0.23.0 | **Pass** |
+| `hermes plugins doctor . --ci` | Runtime discovery/import/registration OK | **Pass** |
+| Plugin enable | `hermes plugins enable earnfi` — enabled | **Pass** |
+| `/earnfi` `/earnfi-help` `/earnfi-status` `/earnfi-smoke` | Live Hermes chat oneshot — all OK, 135 tools in doctor | **Pass** |
+| In-Hermes MCP tool calls (model-facing) | Not yet exercised via agent tool loop | **Open** |
+| Approval UX (read vs write vs paid) | Not demonstrated in Hermes UI | **Open** |
+| Real funded workflow + settlement + receipt | Not run | **Open** |
 | Public GitHub + catalog PR + demo + Typeform | Intentionally held | Pending approval |
 
 ---
@@ -123,22 +128,28 @@ Neither plugin is a wallet app. They:
 
 ---
 
-## 8. Required Hermes test matrix (still open)
+## 8. Hermes test matrix
 
-```bash
-hermes plugins validate . --install-deps
-hermes plugins doctor . --ci
-hermes plugins install .
-hermes plugins enable earnfi
+### Completed (2026-11-07, Hermes Agent v0.23.0)
+
+```text
+hermes plugins validate . --install-deps   → Validation passed
+hermes plugins doctor . --ci               → OK (1 tool registered)
+# Local path: junction %LOCALAPPDATA%\hermes\plugins\earnfi → repo
+hermes plugins enable earnfi               → enabled
+hermes chat -q "/earnfi-status" --oneshot -Q  → Overall OK, 135 tools
+hermes chat -q "/earnfi-smoke" --oneshot -Q   → Overall OK
+hermes chat -q "/earnfi-help" --oneshot -Q    → help rendered
+hermes chat -q "/earnfi" --oneshot -Q         → overview rendered
 ```
 
-Then in a Hermes session:
+Note: `hermes plugins install .` rejects bare `.` — use a Git URL/`owner/repo` for catalog installs, or a local directory under Hermes `plugins/` (junction used for this audit).
 
-1. `/earnfi`, `/earnfi-help`, `/earnfi-status`, `/earnfi-smoke`
-2. Call `earnfi_doctor` and free reads (`earnfi_agent_catalog`, `earnfi_marketplace_stats`)
-3. Confirm ~135 MCP tools visible to the model
-4. Trigger a write tool → confirm approval UI
-5. Low-value funded job (if wallet available) → EarnFi settlement → job funded → evidence → receipt  
+### Still open
+
+1. Call MCP tools from a Hermes agent turn (`earnfi_agent_catalog`, etc.) — confirm model-facing MCP names
+2. Trigger a write/paid tool → confirm Hermes approval UI under `trust: untrusted`
+3. Low-value funded job (if wallet available) → EarnFi settlement → evidence → receipt  
    **Never** treat signature-only or simulated payment as success.
 
 ---
