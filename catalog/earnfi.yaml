@@ -12,7 +12,7 @@ description: >-
 maintainer: EarnFi
 tier: community
 category: tools
-requires_hermes: ">=0.1.0"
+requires_hermes: ">=0.23.0"
 version: "1.0.0"
 title: EarnFi
 readme: true

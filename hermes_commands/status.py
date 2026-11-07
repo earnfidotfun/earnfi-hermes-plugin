@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from doctor.checks import DEFAULT_API_BASE, DEFAULT_MCP_URL, run_doctor
+from ..doctor.checks import DEFAULT_API_BASE, DEFAULT_MCP_URL, run_doctor
 
 
 def handle_status(raw_args: str = "", **_kwargs) -> str:

@@ -11,8 +11,8 @@ import json
 import logging
 from pathlib import Path
 
-from doctor.checks import DEFAULT_API_BASE, DEFAULT_MCP_URL, run_doctor
-from hermes_commands import handle_earnfi, handle_help, handle_smoke, handle_status
+from .doctor.checks import DEFAULT_API_BASE, DEFAULT_MCP_URL, run_doctor
+from .hermes_commands import handle_earnfi, handle_help, handle_smoke, handle_status
 
 logger = logging.getLogger(__name__)
 

@@ -12,8 +12,7 @@ tags:
   - marketplace
   - human-in-the-loop
   - x402
-# Pin after validating against your installed Hermes release (catalog + plugin.yaml must match).
-requires_hermes: ">=0.1.0"
+requires_hermes: ">=0.23.0"
 provides_tools:
   - earnfi_doctor
 config_schema:
