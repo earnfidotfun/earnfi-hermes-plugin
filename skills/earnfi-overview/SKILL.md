@@ -71,4 +71,4 @@ Or run `/earnfi-status` / `earnfi_doctor`.
 3. Never claim funding succeeded until EarnFi returns settled success.
 4. Solana USDC is the default consumer rail; automated withdrawals are Solana USDC only.
 5. Do not invent tools or results that the MCP response did not provide.
-6. Before **registering** or signing: ask which **payment rail** and whether the user has the matching wallet (Solana base58 vs EVM `0x`). Never assume OKX-only.
+6. Before **registering** or signing: call `earnfi_payment_rails`, offer every **active** rail, ask for the matching wallet. Never assume OKX-only. Quote `accepts[]` pay-in networks are not registration rails unless they appear as active rails with register tools.

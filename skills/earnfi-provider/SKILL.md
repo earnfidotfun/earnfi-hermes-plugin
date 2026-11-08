@@ -2,13 +2,13 @@
 name: earnfi-provider
 description: >-
   Register Hermes (or the user) as an EarnFi marketplace service provider —
-  choose Solana vs OKX rail, wallet, profile, then list coding/review/PRD-style
-  services. Use when the user wants to offer services, onboard as an agent,
-  upsert provider services, or become a seller on the agent marketplace.
+  discover live registration rails from earnfi_payment_rails, ask wallet, then
+  list coding/review/PRD-style services. Use when the user wants to offer
+  services, onboard as an agent, upsert provider services, or become a seller.
 license: MIT
 metadata:
   author: earnfi
-  version: "1.1.0"
+  version: "1.1.1"
   homepage: https://github.com/earnfidotfun/earnfi-hermes-plugin
 ---
 
@@ -23,18 +23,32 @@ Invoke every MCP tool via `tool_search` → `tool_call` with the exact
 
 Call `earnfi_payment_rails` and `earnfi_register_info` first (prefixed names).
 
-Then **ask the user** before any challenge/register:
+**Build the rail menu from the live response** — do not hardcode a fixed pair.
 
-1. Which rail to register on?
-   - **Solana USDC (`solana-usdc-x402`)** — Solana base58 wallet; tools `earnfi_register_challenge` → `earnfi_register`
-   - **OKX X Layer USDT0 (`okx-xlayer-usdt0`)** — EVM `0x` wallet + `personal_sign`; tools `earnfi_okx_register_challenge` → `earnfi_okx_register`
-2. Do they already have that wallet, or should they create/connect one first?
-3. Preferred agent display name, bio, categories, website/avatar (optional)
+1. List every rail with `status: active` (and note `default_rail`). For each, show
+   `id`, `label`, `network`, asset, and which wallet type it needs (from the
+   rail payload: Solana base58 vs EVM `0x`, etc.).
+2. Map each rail to its **register** tools that exist on MCP right now:
+   - Canonical Solana Agent API rail → `earnfi_register_challenge` → `earnfi_register`
+   - OKX / X Layer rail → `earnfi_okx_register_challenge` → `earnfi_okx_register`
+   - Any **new** active rail EarnFi adds later → only offer it if matching
+     `*_register_challenge` / `*_register` (or documented register tools) appear
+     via `tool_search`; never invent REST paths.
+3. Ask the user which **active registration rail** to use, whether they already
+   have that wallet, plus display name / bio / categories.
+
+**Registration rails ≠ pay-in networks.** A job/order quote’s `accepts[]` may
+list extra networks (e.g. Base, NEAR) for **funding that create**. Those are
+not identity rails unless they also appear as an active entry in
+`earnfi_payment_rails` with register tools. Do not offer Base/NEAR (or any
+network) as “register here” just because it showed up in a past quote.
 
 **Do not** default to OKX because marketplace browse worked on that surface.
-**Do not** hit a register URL that 404s and conclude “only OKX works” — use the matching MCP register tools for the chosen rail.
+**Do not** hit a register URL that 404s and conclude “only one rail works.”
 
-If they have **no wallet yet**: stop registration; explain Solana vs EVM wallet types; wait for an address (or confirm they will sign in Hermes/Desktop/app). MCP never holds private keys.
+If they have **no wallet yet**: stop registration; explain the wallet types for
+the active rails; wait for an address (or confirm they will sign in
+Hermes/Desktop/app). MCP never holds private keys.
 
 ## Step 1 — Suggest services (before writing)
 
@@ -55,14 +69,15 @@ Keep Tasks (like/follow) and Jobs (hire a human) out of this skill’s service l
 
 ## Step 2 — Register identity
 
-On the **chosen rail only**:
+On the **chosen active rail only** (matching tool family):
 
 1. `*_register_challenge` with the user’s address
-2. User signs the challenge message (Solana or EVM as required)
+2. User signs the challenge message (chain-appropriate: Solana vs EVM `personal_sign`, etc.)
 3. `*_register` with signature / required fields
 4. Store any returned `agent_token` / agent id securely (Hermes secrets / user notes) — never echo private keys
 
-If challenge/register fails: show the MCP error; try the other rail only if the user agrees; do not invent REST paths.
+If challenge/register fails: show the MCP error; offer **another active rail from
+`earnfi_payment_rails`** only if the user agrees; do not invent REST paths.
 
 ## Step 3 — Profile + services
 

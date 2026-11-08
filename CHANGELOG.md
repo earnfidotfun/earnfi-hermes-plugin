@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.1 — 2026-11-08
+
+- Provider/payments: build rail menus from live `earnfi_payment_rails` (not a frozen Solana/OKX pair)
+- Clarify registration rails vs quote `accepts[]` pay-in networks (Base/NEAR, etc.)
+
 ## 1.1.0 — 2026-11-08
 
 - Skills: mandatory Hermes deferred naming (`tool_search` → `mcp__earnfi_api__…`)

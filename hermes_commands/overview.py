@@ -68,7 +68,8 @@ MCP endpoint: `https://app.earnfi.fun/mcp` (~135 tools)
 3. Sign the matching accept only (never mix Solana and OKX proofs).
 4. Retry the **same** tool with `payment_signature` (+ `idempotency_key` when supported).
 5. Report success only when EarnFi returns settled success — never from a signature or tx hash alone.
-6. Before register/pay: ask which **rail** and whether the user has that **wallet**.
+6. Before register/pay: call `earnfi_payment_rails`, offer **active** rails, ask wallet.
+   Quote `accepts[]` may add pay-in networks (e.g. Base/NEAR) without making them register rails.
 
 Withdrawals: automated cash-out is Solana USDC only. Pay-in on Base/NEAR (when enabled) does not imply withdraw on those networks.
 """
