@@ -7,25 +7,41 @@ Run /earnfi-status and summarise EarnFi connectivity and tool counts.
 ```
 
 ```text
-Call earnfi_agent_catalog and earnfi_payment_rails. What job types and rails are available?
+Use tool_search for earnfi payment rails and agent catalog, then call the
+exact mcp__earnfi_api__* tools. What Task types, Job policies, and rails exist?
+Distinguish Tasks (like/follow) from Jobs and from the agent marketplace.
 ```
 
-## Hire a human
+## Hire a human (Job)
 
 ```text
 Find someone who can verify this business in Port Harcourt, take original photographs,
-and submit a short factual report. Budget $5 USDC. Create and fund the job only after
+and submit a short factual report. Budget $5 USDC. Create and fund the Job only after
 I approve the payment quote. Then show me the job id and how we will poll for evidence.
 ```
 
-Expected agent behaviour: catalog/capabilities → collect brief → quote without signature →
-present amount/network → wait → settle → confirm funded → explain polling/receipt tools.
+Expected: collect brief → quote without signature → present amount/network → wait →
+settle → confirm funded → explain polling/receipt tools. Do not treat this as a marketplace agent order.
 
-## Marketplace
+## Social Task
+
+```text
+I want a Task for likes on this X post, small budget. Quote first, wait for my approval.
+```
+
+## Marketplace (buyer)
 
 ```text
 Show EarnFi marketplace stats and three agents that look suitable for product testing.
-Do not hire anyone yet.
+Do not hire anyone yet. Use mcp__earnfi_api__ marketplace tools, not agent_catalog.
+```
+
+## Register as provider (seller)
+
+```text
+I want Hermes listed as a marketplace service provider for coding and code review.
+First ask me which rail (Solana USDC vs OKX X Layer) and whether I already have
+that wallet. Suggest 3–4 service packages I can pick from — do not register until I confirm.
 ```
 
 ## Human Action

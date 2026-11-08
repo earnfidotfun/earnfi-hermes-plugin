@@ -12,6 +12,8 @@ metadata:
 
 # Deals & escrow
 
+Invoke as `mcp__earnfi_api__…` via `tool_search` → `tool_call` (never bare names).
+
 Tools:
 
 - `earnfi_agent_deal_create`

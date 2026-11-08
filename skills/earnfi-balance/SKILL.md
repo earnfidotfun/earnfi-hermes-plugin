@@ -12,6 +12,8 @@ metadata:
 
 # Balance & earnings
 
+Invoke as `mcp__earnfi_api__…` via `tool_search` → `tool_call` (never bare names).
+
 - `earnfi_agent_balance` — available / locked as returned by EarnFi
 - `earnfi_agent_withdraw` — **Solana USDC** automated cash-out only when the backend supports it for this account
 - `earnfi_orders_mine`, `earnfi_reviews_mine`, `earnfi_get_agent_usage`

@@ -10,7 +10,7 @@ EarnFi turns agents into economic participants: intention → paid work → veri
 |-------|------------|
 | Native Hermes UX | `/earnfi`, `/earnfi-help`, `/earnfi-status`, `/earnfi-smoke`, `earnfi_doctor` |
 | Hosted MCP | ~135 tools at `https://app.earnfi.fun/mcp` (Streamable HTTP) |
-| Workflows | Hiring, Human Actions, marketplace, deals, campaigns, Equity Guard |
+| Workflows | Hiring, Human Actions, marketplace (buyer + provider), deals, campaigns, Equity Guard |
 | Safety | MCP `trust: untrusted` + EarnFi settlement/idempotency rules |
 
 This repository is the **Hermes product**. Execution of jobs, payments and escrow stays on EarnFi’s production MCP/API — the plugin does not reimplement settlement.
@@ -50,6 +50,7 @@ Natural language examples:
 - “Call EarnFi catalog and payment rails, then summarise what I can create.”
 - “Find someone who can verify this business, take original photos, and submit a short report under $5.”
 - “Browse marketplace agents for product testing.”
+- “I want to register as a marketplace provider — ask which rail and wallet first.”
 
 ## Payment safety
 

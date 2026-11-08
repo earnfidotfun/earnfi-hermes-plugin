@@ -12,6 +12,8 @@ metadata:
 
 # Equity Guard
 
+Invoke as `mcp__earnfi_api__…` via `tool_search` → `tool_call` (never bare names).
+
 Read / analysis tools include: `equity_get_glossary`, `equity_search`, `equity_get_passport`,
 `equity_get_market_state`, `equity_get_peg`, `equity_get_circuit_breaker`, `equity_get_liquidity`,
 `equity_get_portfolio`, `equity_list_corporate_actions`, Meteora pool helpers.

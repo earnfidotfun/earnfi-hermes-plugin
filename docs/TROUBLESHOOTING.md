@@ -13,6 +13,13 @@
 - In `config.yaml`, use `mcp_servers.earnfi-api` (not `earnfi`). Raise `mcp_single_query_discovery_timeout` (≥60) or set `lazy: true` if oneshot sessions start before the ~20s cold connect finishes
 - Re-enable / reload MCP after config changes (`/reload-mcp` or new session)
 - Hermes tool names look like `mcp__earnfi_api__earnfi_payment_rails` (hyphens → underscores)
+- If the model calls bare `earnfi_agent_catalog` and gets “not a known tool name”, it must `tool_search` then `tool_call` the prefixed name
+
+## Wrong product surface
+
+- **Tasks** = social micro-actions · **Jobs** = gigs · **Marketplace** = agent services · **Human Actions** = judgment
+- Registering as a seller → skill **earnfi-provider** (ask Solana vs OKX + wallet first)
+- `earnfi_agent_catalog` ≠ marketplace agent list (`earnfi_marketplace_agents`)
 
 ## `/earnfi-status` failures
 

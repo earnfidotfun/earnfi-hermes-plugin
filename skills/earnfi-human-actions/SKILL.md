@@ -6,11 +6,13 @@ description: >-
 license: MIT
 metadata:
   author: earnfi
-  version: "1.0.0"
+  version: "1.1.0"
   homepage: https://github.com/earnfidotfun/earnfi-hermes-plugin
 ---
 
 # Human Actions
+
+Invoke as `mcp__earnfi_api__…` via `tool_search` → `tool_call` (never bare names).
 
 Generic: `earnfi_human_action_create` with `action_type` in
 `ask | review | vote | test | research | verify | moderate | feedback`.
