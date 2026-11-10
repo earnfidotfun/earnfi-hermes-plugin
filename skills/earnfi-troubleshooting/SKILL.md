@@ -1,28 +1,34 @@
 ---
 name: earnfi-troubleshooting
 description: >-
-  Diagnose EarnFi MCP connectivity, Hermes deferred tool naming, auth, 402
-  failures, wrong-rail register 404s, stale tool lists, and settlement uncertainty.
+  Diagnose EarnFi MCP connectivity, Hermes deferred tool names, wrong-network
+  payments, missing Base/NEAR register tools, 402 loops, and settlement doubt.
 license: MIT
 metadata:
   author: earnfi
-  version: "1.1.0"
+  version: "1.2.0"
   homepage: https://github.com/earnfidotfun/earnfi-hermes-plugin
 ---
 
 # Troubleshooting
 
-1. Run `/earnfi-status` or call `earnfi_doctor`.
-2. Run `/earnfi-smoke` for read-only checks.
-3. Confirm MCP URL is `https://app.earnfi.fun/mcp` and the plugin is enabled.
-4. **“not a known tool name” for `earnfi_*`:** Hermes deferred tools must be called as the exact `mcp__earnfi_api__earnfi_…` name from `tool_search` / `tool_call`. Bare names always fail.
-5. Classify failures:
-   - Unreachable host → network / DNS / TLS
-   - Server card missing tools → MCP discovery / lazy connect (wait or `/reload-mcp`)
-   - Catalog/rails HTTP errors → Agent API path
-   - Register **404** → wrong rail or inventing REST URLs; use `earnfi_register_*` vs `earnfi_okx_register_*` after asking the user
-   - 402 looping → signature/network mismatch or unpaid retry
-   - Auth errors → Agent-Token / wallet binding; pay-first may still work
-6. Settlement unclear → re-fetch job/order/deal + receipt tools; do not claim success.
-7. Never bypass Hermes approval or EarnFi payment gates to "make the demo work".
-8. Product confusion (Tasks vs Jobs vs marketplace) → re-read **earnfi-overview** product map; do not invent flows.
+1. `/earnfi-status` or `earnfi_doctor`.
+2. `/earnfi-smoke` for read-only checks.
+3. Confirm MCP URL `https://app.earnfi.fun/mcp` and plugin enabled. Server key must be `earnfi-api` (not `earnfi`).
+4. **“not a known tool name” for `earnfi_*`:** use exact `mcp__earnfi_api__earnfi_…` from `tool_search` / `tool_call`. Bare names always fail.
+5. Classify:
+
+| Symptom | Likely cause |
+|---------|----------------|
+| Host unreachable | Network / DNS / TLS |
+| Few MCP tools / only doctor | MCP server named `earnfi` colliding with native toolset; rename to `earnfi-api`, reload |
+| Missing `earnfi_base_register_*` / `earnfi_near_register_*` / `payment_network` | Hosted MCP behind Agent API skill. Say so. Offer Solana/OKX register tools that exist, or pay-first bind. Do not invent tools. |
+| Register 404 | Wrong network tool family or invented REST path |
+| 402 looping | Wrong network proof, params changed between quote and pay, or unpaid retry |
+| `payment_network_unavailable` | Filter not in this quote. Omit filter or switch network. Stay on MCP. |
+| Auth errors | Token / wallet binding. Pay-first may still work without prior register. |
+| Tasks vs Jobs vs marketplace mix-up | Re-read **earnfi-overview** product map |
+
+6. Settlement unclear → re-fetch job/order/deal + receipt tools. Do not claim success from a wallet UI alone.
+7. Never bypass Hermes approval or EarnFi payment gates to force a demo.
+8. Register signature used as `payment_signature` → always wrong. Re-quote and sign the payment accept.

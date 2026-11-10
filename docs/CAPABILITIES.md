@@ -1,8 +1,10 @@
 # EarnFi MCP capability inventory
 
 Source: live server card https://app.earnfi.fun/.well-known/mcp/server-card.json  
-Inventoried version: **1.9.0** — **135** tools  
+Inventoried snapshot: **135** tools (regenerate with `node scripts/gen-capabilities.mjs` after MCP deploys).  
 Classification uses MCP `readOnlyHint` annotations.
+
+Agent API skill https://app.earnfi.fun/skill.md also documents `earnfi_base_register_*`, `earnfi_near_register_*`, and optional `payment_network` on paid creates. If those are missing from the live card, hosted MCP is behind the API. Skills tell Hermes to say so and keep working with tools that exist.
 
 | Class | Count |
 |---|---|
@@ -200,6 +202,6 @@ Classification uses MCP `readOnlyHint` annotations.
 
 ## Advertising policy
 
-Only claim a workflow after the corresponding tools appear on the live card and behave as documented. Optional rails (for example OKX) must be described as optional when health checks fail.
+Only claim a workflow after the corresponding tools appear on the live card and behave as documented. Optional rails (for example OKX) must be described as optional when health checks fail. Multichain Base/NEAR register is live on the Agent API even when MCP has not caught up yet — do not invent MCP tool names.
 
 Hermes approval (`trust: untrusted`) gates write/payment tools that lack `readOnlyHint: true`. EarnFi server-side payment and settlement rules remain authoritative.

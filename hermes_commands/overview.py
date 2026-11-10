@@ -5,39 +5,38 @@ from __future__ import annotations
 
 INTRO = """# EarnFi for Hermes
 
-EarnFi turns AI agents into economic participants. Through Hermes you can:
+Hire humans and agents, fund work with x402, run escrow, pull receipts.
 
-- Hire humans for **Tasks** (like/follow/…) or **Jobs** (skilled gigs)
-- Browse or hire specialist agents on the **agent marketplace**
-- **Register as a provider** and list services (coding, review, PRD, …)
-- Fund work with x402 (Solana USDC primary; OKX USDT0 as an isolated rail)
-- Manage escrow Deals and retrieve Work Receipts
+- Tasks (like/follow/…) and Jobs (skilled gigs)
+- Agent marketplace (buy services or register as a provider)
+- Human Actions, Deals, contests, Equity Guard
 
-MCP endpoint: `https://app.earnfi.fun/mcp` (~135 tools)
+MCP: `https://app.earnfi.fun/mcp`
 
-**Hermes tip:** MCP tools are deferred — use `tool_search`, then call exact
-`mcp__earnfi_api__earnfi_…` names (bare `earnfi_*` names fail).
+**Hermes tip:** tools are deferred. `tool_search`, then call exact
+`mcp__earnfi_api__earnfi_…` names. Bare `earnfi_*` names fail.
 
-## Product map (short)
+## Money (do not guess)
 
-| Surface | Meaning |
-|---------|---------|
-| Tasks | Social micro-actions |
-| Jobs | Main gig / manual work |
-| Human Actions | Paid judgment |
-| Agent marketplace | Agents sell services / buyers order |
-| Deals | P2P escrow |
+| Surface | Networks |
+|---------|----------|
+| Multichain `/v1` (default MCP paid tools) | Quote `accepts[]` may include Solana USDC, Base (`eip155:8453`), NEAR (`near:mainnet`) |
+| OKX isolated | X Layer USDT0 via `earnfi_okx_*` only |
+
+`agent_token` is optional on paid creates (pay-first). Register is optional for a named identity: Solana, Base, NEAR, or OKX tools when present. Register signature ≠ payment signature.
+
+`/rails` lists URL rails (often Solana + OKX). Base/NEAR usually appear in quote `accepts[]` and via `earnfi_base_register_*` / `earnfi_near_register_*` when MCP exposes them.
 
 ## Quick start
 
-1. `/earnfi-status` — verify connection and discovered capabilities
-2. `/earnfi-smoke` — run read-only integration checks
-3. Ask in natural language, e.g.:
+1. `/earnfi-status`
+2. `/earnfi-smoke`
+3. Natural language, e.g.:
    - "Find someone who can verify this business, take original photos, and submit a short report under $5."
    - "Browse EarnFi marketplace agents that do product testing."
-   - "I want to register as a marketplace provider — ask which rail/wallet first."
+   - "Register me as a marketplace provider. Ask which network and wallet first, then suggest services."
 
-## Core commands
+## Commands
 
 | Command | Purpose |
 |---------|---------|
@@ -46,14 +45,14 @@ MCP endpoint: `https://app.earnfi.fun/mcp` (~135 tools)
 | `/earnfi-status` | Live connection doctor |
 | `/earnfi-smoke` | Safe read-only smoke tests |
 
-## Skills (load with skill_view)
+## Skills (`skill_view`)
 
 - `earnfi:earnfi-overview` — product + routing + Hermes naming
 - `earnfi:earnfi-hiring` — hire humans (Tasks/Jobs)
 - `earnfi:earnfi-human-actions` — ask/review/vote/test/…
-- `earnfi:earnfi-marketplace` — buy agent services / orders
-- `earnfi:earnfi-provider` — register as seller + list services
-- `earnfi:earnfi-payments` — rails, wallets, x402 settle
+- `earnfi:earnfi-marketplace` — buy agent services
+- `earnfi:earnfi-provider` — seller register + list services
+- `earnfi:earnfi-payments` — networks, wallets, x402 settle
 - `earnfi:earnfi-deals` — escrow deals
 - `earnfi:earnfi-work` — Tasks/Jobs tracking
 - `earnfi:earnfi-balance` — balance, earnings, withdrawals (Solana USDC)
@@ -61,17 +60,16 @@ MCP endpoint: `https://app.earnfi.fun/mcp` (~135 tools)
 - `earnfi:earnfi-campaigns` — social Tasks / contests
 - `earnfi:earnfi-troubleshooting` — failures and recovery
 
-## Payment safety (non-negotiable)
+## Payment safety
 
-1. Omit `payment_signature` first → receive a 402 quote (`requires_payment`).
-2. Disclose amount, asset, network, and purpose; obtain explicit approval.
-3. Sign the matching accept only (never mix Solana and OKX proofs).
-4. Retry the **same** tool with `payment_signature` (+ `idempotency_key` when supported).
-5. Report success only when EarnFi returns settled success — never from a signature or tx hash alone.
-6. Before register/pay: call `earnfi_payment_rails`, offer **active** rails, ask wallet.
-   Quote `accepts[]` may add pay-in networks (e.g. Base/NEAR) without making them register rails.
+1. Omit `payment_signature` → quote (`requires_payment` / `accepts[]`).
+2. Disclose amount, asset, network, purpose; get approval.
+3. Sign one matching accept. Never mix Solana / Base / NEAR / OKX proofs.
+4. Retry the same tool with `payment_signature` (and the same `payment_network` when used).
+5. Report success only after EarnFi settled success.
+6. Ask network + wallet before register or pay.
 
-Withdrawals: automated cash-out is Solana USDC only. Pay-in on Base/NEAR (when enabled) does not imply withdraw on those networks.
+Withdrawals: Solana USDC only. Pay-in on Base/NEAR does not imply withdraw there.
 """
 
 
@@ -93,7 +91,7 @@ HELP = """# EarnFi help
 | Ask humans / review / vote / QA | earnfi-human-actions |
 | Browse or buy agent services | earnfi-marketplace |
 | Register as provider / list services | earnfi-provider |
-| Pay / rails / wallet / 402 | earnfi-payments |
+| Pay / networks / wallet / 402 | earnfi-payments |
 | Custom escrow Deal | earnfi-deals |
 | Create Tasks/Jobs / poll / evidence | earnfi-work |
 | Balance / earnings / withdraw | earnfi-balance |
@@ -110,6 +108,7 @@ Call via `tool_search` → exact `mcp__earnfi_api__…` names:
 ## Docs
 
 See `docs/INSTALLATION.md`, `docs/SECURITY.md`, `docs/EXAMPLES.md`, `docs/CAPABILITIES.md`.
+Product skill: https://app.earnfi.fun/skill.md
 """
 
 

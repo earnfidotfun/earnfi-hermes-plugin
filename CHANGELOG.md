@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.0 — 2026-11-10
+
+- Align with Agent API skill 2.1.3: multichain Solana/Base/NEAR accepts, OKX isolated, pay-first, optional register
+- Provider: Solana / Base / NEAR / OKX register families via `tool_search`; `/rails` ≠ full network list
+- Payments: `payment_network` when schema has it; trust quote `accepts[]`; register sig ≠ payment
+- Doctor advisory when hosted MCP lacks Base/NEAR register tools
+- Docs/examples/overview unslopped for Hermes clarity
+
 ## 1.1.1 — 2026-11-08
 
 - Provider/payments: build rail menus from live `earnfi_payment_rails` (not a frozen Solana/OKX pair)

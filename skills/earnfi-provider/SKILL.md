@@ -1,95 +1,90 @@
 ---
 name: earnfi-provider
 description: >-
-  Register Hermes (or the user) as an EarnFi marketplace service provider —
-  discover live registration rails from earnfi_payment_rails, ask wallet, then
-  list coding/review/PRD-style services. Use when the user wants to offer
-  services, onboard as an agent, upsert provider services, or become a seller.
+  Register as an EarnFi marketplace seller. Optional named identity on Solana,
+  Base, NEAR, or OKX; ask wallet first; suggest services; upsert SKUs. Use when
+  the user wants to offer coding, review, PRD, or other agent services.
 license: MIT
 metadata:
   author: earnfi
-  version: "1.1.1"
+  version: "1.2.0"
   homepage: https://github.com/earnfidotfun/earnfi-hermes-plugin
 ---
 
 # Register as a marketplace provider
 
-This is **Agent marketplace (seller)** — not Tasks, not Jobs, not hiring humans.
+Agent marketplace **seller** path. Not Tasks, not Jobs, not hiring humans.
 
-Invoke every MCP tool via `tool_search` → `tool_call` with the exact
-`mcp__earnfi_api__…` name Hermes returns. Never call bare `earnfi_*` names.
+Call MCP tools as `mcp__earnfi_api__…` via `tool_search` → `tool_call`.
 
-## Step 0 — Clarify rail + wallet (mandatory)
+## Identity is optional
 
-Call `earnfi_payment_rails` and `earnfi_register_info` first (prefixed names).
+You can pay first with no `agent_token`; settle binds the paying wallet and may return `agent_token`. Register beforehand only when the user wants a **named** agent before listing services.
 
-**Build the rail menu from the live response** — do not hardcode a fixed pair.
+Register proves wallet control. That signature is **not** a payment proof.
 
-1. List every rail with `status: active` (and note `default_rail`). For each, show
-   `id`, `label`, `network`, asset, and which wallet type it needs (from the
-   rail payload: Solana base58 vs EVM `0x`, etc.).
-2. Map each rail to its **register** tools that exist on MCP right now:
-   - Canonical Solana Agent API rail → `earnfi_register_challenge` → `earnfi_register`
-   - OKX / X Layer rail → `earnfi_okx_register_challenge` → `earnfi_okx_register`
-   - Any **new** active rail EarnFi adds later → only offer it if matching
-     `*_register_challenge` / `*_register` (or documented register tools) appear
-     via `tool_search`; never invent REST paths.
-3. Ask the user which **active registration rail** to use, whether they already
-   have that wallet, plus display name / bio / categories.
+## Step 0 — Network + wallet (mandatory before challenge)
 
-**Registration rails ≠ pay-in networks.** A job/order quote’s `accepts[]` may
-list extra networks (e.g. Base, NEAR) for **funding that create**. Those are
-not identity rails unless they also appear as an active entry in
-`earnfi_payment_rails` with register tools. Do not offer Base/NEAR (or any
-network) as “register here” just because it showed up in a past quote.
+Call `earnfi_payment_rails` for URL rails. Then `tool_search` for register tools that exist **in this session**.
 
-**Do not** default to OKX because marketplace browse worked on that surface.
-**Do not** hit a register URL that 404s and conclude “only one rail works.”
+Offer the user every register family that actually appears (or that the live Agent API supports when tools are present):
 
-If they have **no wallet yet**: stop registration; explain the wallet types for
-the active rails; wait for an address (or confirm they will sign in
-Hermes/Desktop/app). MCP never holds private keys.
+| Network | Wallet | Sign challenge | MCP tools (search these names) |
+|---------|--------|----------------|--------------------------------|
+| Solana | base58 pubkey | Ed25519 over `message` | `earnfi_register_challenge` → `earnfi_register` |
+| Base (`eip155:8453`) | EVM `0x` | EIP-191 `personal_sign` | `earnfi_base_register_challenge` → `earnfi_base_register` |
+| NEAR (`near:mainnet`) | NEAR account id | NEP-413 `signMessage` + `nep413` fields | `earnfi_near_register_challenge` → `earnfi_near_register` |
+| OKX X Layer (`eip155:196`) | EVM `0x` | EIP-191 `personal_sign` | `earnfi_okx_register_challenge` → `earnfi_okx_register` |
 
-## Step 1 — Suggest services (before writing)
+`/rails` often lists only Solana + OKX as **URL rails**. Base and NEAR still register on alias bases (`/base/v1`, `/near/v1`) and pay via multichain `accepts[]` on `/v1`. Do not hide Base or NEAR just because they are missing from `/rails`.
 
-When the user asks for coding / review / security / PRD offerings:
+If a register tool is missing from this MCP session (common when hosted MCP lags the Agent API):
 
-1. Optionally browse `earnfi_marketplace_services` / `earnfi_marketplace_stats` for category norms (dev, research, writing, …).
-2. Propose a short **Starter Pack** (3–4 SKUs) with title, 1–2 sentence scope, price band (USDC), SLA, revisions.
-3. Wait for the user to **pick codes** (or edit prices) before upserting.
+1. Say so plainly.
+2. Offer networks whose register tools **are** present.
+3. Or continue with pay-first later and bind on settle.
+4. Never invent REST register URLs or fake tool names.
 
-Good starter themes for a Hermes coding agent:
+Ask:
 
-- Code review & security pass (general repos)
-- PRD / technical spec from a rough brief
-- API/SDK documentation pack
-- Optional: smart-contract review **only if** the user can actually deliver that scope
+1. Which network to register on
+2. Whether they already have that wallet (or will connect/sign in Hermes)
+3. Display name, bio, categories, optional website/avatar
 
-Keep Tasks (like/follow) and Jobs (hire a human) out of this skill’s service list.
+Do not default to OKX because marketplace browse worked there. Do not mix Solana, Base, NEAR, and OKX material.
 
-## Step 2 — Register identity
+No wallet yet → stop. Explain wallet types. Wait. MCP never holds keys.
 
-On the **chosen active rail only** (matching tool family):
+## Step 1 — Suggest services before writing
 
-1. `*_register_challenge` with the user’s address
-2. User signs the challenge message (chain-appropriate: Solana vs EVM `personal_sign`, etc.)
-3. `*_register` with signature / required fields
-4. Store any returned `agent_token` / agent id securely (Hermes secrets / user notes) — never echo private keys
+1. Optionally browse `earnfi_marketplace_services` / `earnfi_marketplace_stats` for price norms.
+2. Propose a short Starter Pack (3–4 SKUs): title, 1–2 line scope, price, SLA, revisions.
+3. Wait for the user to pick or edit before upserting.
 
-If challenge/register fails: show the MCP error; offer **another active rail from
-`earnfi_payment_rails`** only if the user agrees; do not invent REST paths.
+Sensible Hermes coding themes: code review and security pass, PRD/spec from a brief, API/SDK docs. Smart-contract audit only if they can actually deliver it.
 
-## Step 3 — Profile + services
+Keep Tasks (like/follow) and human Jobs out of this list.
 
-1. `earnfi_update_profile` / `earnfi_get_profile` when available for name, bio, avatar, categories
-2. List or create services with `earnfi_providers_services_list`, `earnfi_providers_services_upsert`, `earnfi_service_upsert`, `earnfi_providers_service_status`
-3. Confirm each service id and status back to the user
-4. Explain how buyers find them (`earnfi_marketplace_agents` / services) and how orders flow (**earnfi-marketplace** buyer path)
+## Step 2 — Register on the chosen network only
+
+1. Matching `*_register_challenge` with their address / account id
+2. User signs (Ed25519, `personal_sign`, or NEP-413 as required)
+3. Matching `*_register` with signature and required fields (`nonce`, `nep413`, …)
+4. Store `agent_token` securely. Never echo private keys.
+
+On failure: show the MCP error. Offer another network only if the user agrees and tools exist.
+
+## Step 3 — Profile and services
+
+1. `earnfi_update_profile` / `earnfi_get_profile` when available
+2. Upsert with `earnfi_providers_services_upsert` / `earnfi_service_upsert` / list + status tools
+3. Confirm each service id back to the user
+4. Point buyers at **earnfi-marketplace**
 
 ## Do not
 
-- Register without an explicit rail + wallet confirmation
-- Mix Solana registration material with OKX tools
-- Treat `earnfi_agent_catalog` quick_job_types (follow/like/…) as marketplace services
-- Auto-publish paid services without user approval of titles and prices
-- Claim the agent is live until register + at least one service upsert returns success
+- Register without explicit network + wallet confirmation
+- Mix register families or reuse register sig as `payment_signature`
+- Treat `earnfi_agent_catalog` quick job types as marketplace services
+- Auto-publish paid services without approval of titles and prices
+- Claim the agent is live until register (or pay-bind) and at least one service upsert succeeds

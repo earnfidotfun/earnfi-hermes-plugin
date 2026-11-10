@@ -8,8 +8,9 @@ Run /earnfi-status and summarise EarnFi connectivity and tool counts.
 
 ```text
 Use tool_search for earnfi payment rails and agent catalog, then call the
-exact mcp__earnfi_api__* tools. What Task types, Job policies, and rails exist?
-Distinguish Tasks (like/follow) from Jobs and from the agent marketplace.
+exact mcp__earnfi_api__* tools. What Task types, Job policies, and networks
+show up? Distinguish Tasks from Jobs from the agent marketplace. Note that
+/rails URL rails are not the same as every network in a 402 accepts[] list.
 ```
 
 ## Hire a human (Job)
@@ -20,13 +21,14 @@ and submit a short factual report. Budget $5 USDC. Create and fund the Job only 
 I approve the payment quote. Then show me the job id and how we will poll for evidence.
 ```
 
-Expected: collect brief → quote without signature → present amount/network → wait →
-settle → confirm funded → explain polling/receipt tools. Do not treat this as a marketplace agent order.
+Expected: collect brief → quote without signature → present amount/network from accepts[] →
+wait → settle → confirm funded → explain polling/receipt tools. Not a marketplace agent order.
 
 ## Social Task
 
 ```text
 I want a Task for likes on this X post, small budget. Quote first, wait for my approval.
+If accepts[] includes Base as well as Solana, ask which network I will sign on.
 ```
 
 ## Marketplace (buyer)
@@ -40,8 +42,10 @@ Do not hire anyone yet. Use mcp__earnfi_api__ marketplace tools, not agent_catal
 
 ```text
 I want Hermes listed as a marketplace service provider for coding and code review.
-First ask me which rail (Solana USDC vs OKX X Layer) and whether I already have
-that wallet. Suggest 3–4 service packages I can pick from — do not register until I confirm.
+Ask which network (Solana, Base, NEAR, or OKX) and whether I already have that wallet.
+tool_search for earnfi_register, earnfi_base_register, earnfi_near_register, earnfi_okx_register.
+If some register tools are missing from MCP, say so and offer what is available.
+Suggest 3–4 service packages I can pick from. Do not register until I confirm.
 ```
 
 ## Human Action

@@ -1,19 +1,19 @@
 # EarnFi for Hermes
 
-**Work + Money for AI agents.** Hire humans and specialist agents, fund real-world work with x402, manage escrow, and retrieve verifiable receipts — inside [Hermes Agent](https://hermes-agent.nousresearch.com/).
+Work + Money inside [Hermes Agent](https://hermes-agent.nousresearch.com/): hire humans and agents, fund work with x402, run escrow, pull receipts.
 
-EarnFi turns agents into economic participants: intention → paid work → verified outcomes.
+Aligned with the live Agent API skill at https://app.earnfi.fun/skill.md (multichain Solana / Base / NEAR accepts, OKX isolated rail, pay-first).
 
 ## What you get
 
 | Layer | Capability |
 |-------|------------|
 | Native Hermes UX | `/earnfi`, `/earnfi-help`, `/earnfi-status`, `/earnfi-smoke`, `earnfi_doctor` |
-| Hosted MCP | ~135 tools at `https://app.earnfi.fun/mcp` (Streamable HTTP) |
+| Hosted MCP | Streamable HTTP at `https://app.earnfi.fun/mcp` (tool count follows the live server card) |
 | Workflows | Hiring, Human Actions, marketplace (buyer + provider), deals, campaigns, Equity Guard |
-| Safety | MCP `trust: untrusted` + EarnFi settlement/idempotency rules |
+| Safety | MCP `trust: untrusted` + EarnFi settlement / idempotency rules |
 
-This repository is the **Hermes product**. Execution of jobs, payments and escrow stays on EarnFi’s production MCP/API — the plugin does not reimplement settlement.
+This repo is the Hermes package. Jobs, payments, and escrow run on EarnFi MCP/API. The plugin does not reimplement settlement.
 
 ## Install
 
@@ -50,17 +50,17 @@ Natural language examples:
 - “Call EarnFi catalog and payment rails, then summarise what I can create.”
 - “Find someone who can verify this business, take original photos, and submit a short report under $5.”
 - “Browse marketplace agents for product testing.”
-- “I want to register as a marketplace provider — ask which rail and wallet first.”
+- “Register as a marketplace provider — ask which network and wallet first.”
 
 ## Payment safety
 
 1. Quote without `payment_signature`.
 2. Disclose amount, asset, network and purpose; get approval.
-3. Sign one matching accept; never mix Solana and OKX proofs.
-4. Retry the same tool with `payment_signature` (use `idempotency_key` when available).
-5. Report success only after EarnFi confirms settlement — never from a signature or tx hash alone.
+3. Sign one matching accept. Never mix Solana / Base / NEAR / OKX proofs. Register sig ≠ payment.
+4. Retry the same tool with `payment_signature` (`idempotency_key` when available).
+5. Report success only after EarnFi confirms settlement.
 
-Automated withdrawals are **Solana USDC** only. See [docs/SECURITY.md](docs/SECURITY.md).
+Automated withdrawals are Solana USDC only. See [docs/SECURITY.md](docs/SECURITY.md).
 
 ## Documentation
 

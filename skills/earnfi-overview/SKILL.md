@@ -1,74 +1,86 @@
 ---
 name: earnfi-overview
 description: >-
-  EarnFi Work + Money overview for Hermes. Use when the user mentions EarnFi,
-  hiring humans or agents, funding work, escrow, x402, receipts, marketplace,
-  Human Actions, contests, tasks vs jobs, registering as a provider, or Equity Guard.
+  EarnFi Work + Money overview for Hermes. Hiring, marketplace, x402 multichain
+  (Solana/Base/NEAR), OKX rail, provider registration, Human Actions, deals,
+  receipts, Equity Guard. Use when the user mentions EarnFi or those workflows.
 license: MIT
 metadata:
   author: earnfi
-  version: "1.1.0"
+  version: "1.2.0"
   homepage: https://github.com/earnfidotfun/earnfi-hermes-plugin
 ---
 
 # EarnFi overview
 
-EarnFi lets Hermes agents commission **real-world work**, pay with programmable **x402** rails, and retrieve **verifiable results**.
+EarnFi lets Hermes commission real-world work, pay with x402, and pull verifiable results.
 
-MCP: `https://app.earnfi.fun/mcp` (Streamable HTTP). Prefer MCP tools over inventing REST paths.
+- MCP: `https://app.earnfi.fun/mcp` (Streamable HTTP)
+- Product skill: `https://app.earnfi.fun/skill.md`
+- Prefer MCP tools over inventing REST paths. SDK path for code integrations: `@earn-fi/agent-client`.
 
 ## Hermes tool names (mandatory)
 
-EarnFi MCP tools are **deferred**. Never call bare names like `earnfi_agent_catalog`.
+EarnFi MCP tools are deferred. Never call bare names like `earnfi_agent_catalog`.
 
-1. Use `tool_search` (queries such as `earnfi payment rails`, `earnfi_register`, `earnfi marketplace`).
-2. Invoke with `tool_call` using the **exact** name returned — typically `mcp__earnfi_api__earnfi_<tool>`.
-3. If a call fails with “not a known tool name”, search again; do not invent aliases.
+1. `tool_search` (e.g. `earnfi payment rails`, `earnfi_register`, `earnfi marketplace`, `earnfi_base_register`)
+2. `tool_call` with the **exact** name returned, usually `mcp__earnfi_api__earnfi_<tool>`
+3. On “not a known tool name”, search again. Do not invent aliases.
 
-Native-only (not MCP): `earnfi_doctor` and slash commands `/earnfi`, `/earnfi-help`, `/earnfi-status`, `/earnfi-smoke`.
+Native only (not MCP): `earnfi_doctor`, `/earnfi`, `/earnfi-help`, `/earnfi-status`, `/earnfi-smoke`.
 
-## Product map (do not conflate)
+## Product map
 
 | Surface | What it is | Typical tools |
 |---------|------------|---------------|
-| **Tasks** | Quick social / micro actions (follow, like, repost, quote, comment, video view, combos) | `earnfi_social_create`, catalog `quick_job_types` |
-| **Jobs** | Main gig / skilled freelance or manual work with deliverables & review | `earnfi_manual_create`, hire listings, verifications |
-| **Contests / campaigns** | Prize pools, leaderboards, social campaigns | `earnfi_contest_create`, contest tools |
-| **Human Actions** | Paid judgment: ask, review, vote, test, research, … | `earnfi_ask_humans`, `earnfi_human_*` |
-| **Deals** | Peer-to-peer USDC escrow (buyer ↔ seller) | Deal tools in **earnfi-deals** |
-| **Agent marketplace** | Agents list **services**; buyers order/hire agents | **earnfi-marketplace** / **earnfi-provider** |
-| **Open work** | Gallery of open briefs agents can claim | `earnfi_open_work_*` |
-| **Equity Guard** | Non-custodial trade safety checks | **earnfi-equity-guard** |
+| Tasks | Social / micro actions (follow, like, …) | `earnfi_social_create`, catalog `quick_job_types` |
+| Jobs | Skilled or manual gigs with deliverables | `earnfi_manual_create`, verifications |
+| Contests / campaigns | Prize pools, social campaigns | `earnfi_contest_create` |
+| Human Actions | Paid judgment | `earnfi_ask_humans`, `earnfi_human_*` |
+| Deals | P2P escrow | **earnfi-deals** |
+| Agent marketplace | Agents sell services; buyers order | **earnfi-marketplace** / **earnfi-provider** |
+| Open work | Open briefs agents can claim | `earnfi_open_work_*` |
+| Equity Guard | Trade safety checks | **earnfi-equity-guard** |
 
-`earnfi_agent_catalog` is the **Agent API / Human Execution catalog** (job types, policies, rails hints) — **not** the list of marketplace agents. For marketplace agents use `earnfi_marketplace_agents` / `earnfi_marketplace_services`.
+`earnfi_agent_catalog` is Human Execution / Agent API discovery. It is **not** the marketplace agent list. Use `earnfi_marketplace_agents` / `earnfi_marketplace_services` for that.
+
+## Money model (short)
+
+| Piece | Fact |
+|-------|------|
+| Multichain `/v1` | Quote `accepts[]` may list Solana, Base (`eip155:8453`), NEAR (`near:mainnet`) |
+| OKX | Isolated `/okx/v1` + `earnfi_okx_*` only (X Layer USDT0) |
+| `payment_network` | Optional filter on paid tools when the schema has it |
+| Register | Optional on Solana / Base / NEAR / OKX; separate from payment |
+| Pay-first | `agent_token` optional; settle can bind the payer wallet |
+
+See **earnfi-payments** and **earnfi-provider**.
 
 ## Route the request
 
 | Intent | Skill |
 |--------|--------|
-| Hire a **human** for tasks/jobs/field work | **earnfi-hiring** |
-| Human judgment (ask, review, vote, test, …) | **earnfi-human-actions** |
-| Browse / **buy** marketplace agent services | **earnfi-marketplace** |
-| **Register** as marketplace provider / list services | **earnfi-provider** |
-| Quotes, 402, settlement, networks, wallets | **earnfi-payments** |
-| Escrow Deal between parties | **earnfi-deals** |
-| Jobs/tasks tracking, submissions, receipts | **earnfi-work** |
-| Balance / earnings / withdraw | **earnfi-balance** |
-| Tokenized equity safety | **earnfi-equity-guard** |
-| Social campaign / contest | **earnfi-campaigns** |
-| Connection / 402 / naming failures | **earnfi-troubleshooting** |
+| Hire a human for tasks/jobs | **earnfi-hiring** |
+| Human judgment | **earnfi-human-actions** |
+| Buy marketplace services | **earnfi-marketplace** |
+| Register / list services as seller | **earnfi-provider** |
+| Quotes, networks, wallets, 402 | **earnfi-payments** |
+| Escrow Deal | **earnfi-deals** |
+| Track jobs/tasks, receipts | **earnfi-work** |
+| Balance / withdraw | **earnfi-balance** |
+| Equity checks | **earnfi-equity-guard** |
+| Contests / social campaigns | **earnfi-campaigns** |
+| Errors / naming / stuck payments | **earnfi-troubleshooting** |
 
-## Free discovery (start here)
+## Free discovery
 
-Via `tool_search` → `tool_call` on the prefixed names: health, agent_catalog, payment_rails, marketplace_stats, find_work.
-
-Or run `/earnfi-status` / `earnfi_doctor`.
+`tool_search` → health, agent_catalog, payment_rails, marketplace_stats, find_work. Or `/earnfi-status` / `earnfi_doctor`.
 
 ## Hard rules
 
-1. Pay-first on paid creates: first call **without** `payment_signature` → quote; then settle.
-2. Never mix Solana `signed_tx` with OKX EVM `paymentPayload`.
-3. Never claim funding succeeded until EarnFi returns settled success.
-4. Solana USDC is the default consumer rail; automated withdrawals are Solana USDC only.
-5. Do not invent tools or results that the MCP response did not provide.
-6. Before **registering** or signing: call `earnfi_payment_rails`, offer every **active** rail, ask for the matching wallet. Never assume OKX-only. Quote `accepts[]` pay-in networks are not registration rails unless they appear as active rails with register tools.
+1. Quote without `payment_signature`, then settle the same call.
+2. Never mix Solana, Base, NEAR, and OKX proofs.
+3. Never claim funded until EarnFi returns settled success.
+4. Withdrawals: Solana USDC only unless docs say otherwise.
+5. Do not invent tools or results the MCP response did not return.
+6. Before register or pay: ask network + wallet. Build the menu from live tools + quote `accepts[]`, not a frozen two-rail list.

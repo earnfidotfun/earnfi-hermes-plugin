@@ -18,8 +18,13 @@
 ## Wrong product surface
 
 - **Tasks** = social micro-actions · **Jobs** = gigs · **Marketplace** = agent services · **Human Actions** = judgment
-- Registering as a seller → skill **earnfi-provider** (ask Solana vs OKX + wallet first)
+- Registering as a seller → skill **earnfi-provider** (ask Solana / Base / NEAR / OKX + wallet; use tools that exist)
 - `earnfi_agent_catalog` ≠ marketplace agent list (`earnfi_marketplace_agents`)
+- `/rails` URL rails ≠ every network in a quote’s `accepts[]` (Base/NEAR often appear only in the quote)
+
+## MCP behind Agent API
+
+Hosted MCP may lag `https://app.earnfi.fun/skill.md`. If `earnfi_base_register_*`, `earnfi_near_register_*`, or `payment_network` are missing from `tool_search`, say so. Offer live register tools or pay-first bind. Do not invent tool names.
 
 ## `/earnfi-status` failures
 

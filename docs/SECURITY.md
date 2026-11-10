@@ -27,9 +27,9 @@ Hermes approval is **not** a substitute for EarnFi settlement verification.
 3. Before paying, disclose amount, asset, network, destination/purpose.
 4. Never describe payment as successful until EarnFi confirms settlement.
 5. Use `idempotency_key` when available; retries must not double-create paid resources.
-6. Never mix Solana and OKX payment proofs.
+6. Never mix Solana, Base, NEAR, and OKX payment proofs. Register signatures are not payments.
 7. Never log private keys, seed phrases or raw payment signatures in skills output beyond what the user must see to approve.
-8. Automated withdrawals: Solana USDC only — do not imply Base/NEAR withdraw from pay-in accepts.
+8. Automated withdrawals: Solana USDC only. Do not imply Base/NEAR withdraw from pay-in accepts.
 
 ## Credentials
 

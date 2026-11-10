@@ -7,7 +7,7 @@ description: >-
 license: MIT
 metadata:
   author: earnfi
-  version: "1.1.0"
+  version: "1.2.0"
   homepage: https://github.com/earnfidotfun/earnfi-hermes-plugin
 ---
 
@@ -33,9 +33,9 @@ Ask the user which kind they want if unclear. Do not call social Task types “j
 1. **Objective** — location, deliverables, deadline, budget, evidence.
 2. **Choose type** — Tasks / Jobs / Human Actions / Contest (table above).
 3. **Discovery (optional)** — `earnfi_search_capabilities`, `earnfi_find_work`; use `earnfi_agent_catalog` for Task/Job type policies — **not** for marketplace agent profiles.
-4. **Collect requirements** before paying.
-5. **Quote** — create tool **without** `payment_signature`.
-6. **Disclose & approve** — amount, asset, network, purpose.
+4. **Collect requirements** before paying. `agent_token` is optional (pay-first).
+5. **Quote** — create tool **without** `payment_signature` (optional `payment_network` when the schema has it).
+6. **Disclose & approve** — amount, asset, **network from accepts[]**, purpose. Ask which accept they will sign if several networks appear.
 7. **Settle** — matching accept + same tool with `payment_signature` (**earnfi-payments**).
 8. **Verify funding** — EarnFi settled success only.
 9. **Monitor** — `earnfi_check_work`, `earnfi_get_job`, submissions / Human Action results.

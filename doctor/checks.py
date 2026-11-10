@@ -32,6 +32,14 @@ SMOKE_REQUIRED_TOOLS = (
     "earnfi_get_receipt",
 )
 
+# Documented in skill.md / MCP source. Advisory only when hosted MCP lags.
+EXPECTED_MULTICHAIN_MCP_TOOLS = (
+    "earnfi_base_register_challenge",
+    "earnfi_base_register",
+    "earnfi_near_register_challenge",
+    "earnfi_near_register",
+)
+
 
 @dataclass
 class CheckResult:
@@ -207,6 +215,24 @@ def run_doctor(
                 data={"tool_count": tool_count, "version": version},
             )
         )
+        lag = [n for n in EXPECTED_MULTICHAIN_MCP_TOOLS if n not in names]
+        checks.append(
+            CheckResult(
+                name="Multichain register tools (advisory)",
+                ok=True,
+                detail=(
+                    "Base/NEAR register tools present on MCP card."
+                    if not lag
+                    else (
+                        "NOTE — hosted MCP lags Agent API skill.md; missing: "
+                        + ", ".join(lag)
+                        + ". REST /base/v1 and /near/v1 register still work. "
+                        "Hermes should say MCP tools are missing and offer live alternatives."
+                    )
+                ),
+                data={"missing": lag},
+            )
+        )
     else:
         err = card.get("error") if isinstance(card, dict) else card
         checks.append(
@@ -282,7 +308,7 @@ def run_doctor(
         )
     )
 
-    # Overall: core Solana discovery path must pass; OKX optional.
+    # Overall: core discovery path must pass. OKX and multichain MCP lag are advisory.
     core_names = {
         "MCP endpoint reachability",
         "MCP server card / tool discovery",
