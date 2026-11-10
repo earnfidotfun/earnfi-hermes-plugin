@@ -26,6 +26,14 @@
 
 Live MCP **2.1.0+** includes `earnfi_base_register_*`, `earnfi_near_register_*`, `earnfi_integrator_rules`, `earnfi_x402_capabilities`, and `payment_network` on paid creates. If `tool_search` cannot find them, reload MCP (`/reload-mcp`) or start a new session. Do not invent tool names.
 
+## Version confusion
+
+`/earnfi-status` prints **Hermes plugin version** (`plugin.yaml`) and **MCP server card version** separately. MCP `2.1.0` is not the Hermes plugin version.
+
+## Four peer networks
+
+Product answer is Solana, Base, NEAR, OKX — equal options. Do not reduce that to Solana+OKX because `earnfi_payment_rails` shows two URL bases.
+
 ## `/earnfi-status` failures
 
 | Symptom | Likely cause |

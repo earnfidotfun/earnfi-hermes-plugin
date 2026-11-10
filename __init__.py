@@ -11,7 +11,7 @@ import json
 import logging
 from pathlib import Path
 
-from .doctor.checks import DEFAULT_API_BASE, DEFAULT_MCP_URL, run_doctor
+from .doctor.checks import DEFAULT_API_BASE, DEFAULT_MCP_URL, PEER_NETWORKS, run_doctor
 from .hermes_commands import handle_earnfi, handle_help, handle_smoke, handle_status
 
 logger = logging.getLogger(__name__)
@@ -22,10 +22,10 @@ _SKILLS_DIR = _PLUGIN_ROOT / "skills"
 EARNFI_DOCTOR_SCHEMA = {
     "name": "earnfi_doctor",
     "description": (
-        "Run EarnFi connection diagnostics: MCP reachability, server-card tool "
-        "discovery, Agent API health, catalog and payment rails. Read-only; "
-        "never settles payments. Use when the user asks if EarnFi is connected "
-        "or when troubleshooting."
+        "Run EarnFi connection diagnostics: Hermes plugin version, MCP server "
+        "card version, four peer networks (Solana/Base/NEAR/OKX), tool discovery, "
+        "Agent API health. Read-only; never settles payments. Use for version "
+        "checks, connectivity, or troubleshooting."
     ),
     "parameters": {
         "type": "object",
@@ -51,8 +51,10 @@ def earnfi_doctor(args: dict, **_kwargs) -> str:
         {
             "success": report.overall_ok,
             "report_text": report.format_text(),
+            "plugin_version": report.plugin_version,
             "tool_count": report.tool_count,
             "server_version": report.server_version,
+            "peer_networks": list(PEER_NETWORKS),
             "readonly_tools": report.readonly_tools,
             "write_tools": report.write_tools,
         }

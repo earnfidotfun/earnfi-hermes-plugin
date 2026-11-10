@@ -7,10 +7,14 @@ Run /earnfi-status and summarise EarnFi connectivity and tool counts.
 ```
 
 ```text
-Use tool_search for earnfi payment rails and earnfi_x402_capabilities, then call
-the exact mcp__earnfi_api__* tools. How many URL rails exist, and which pay
-networks appear on /v1 accepts[] (Solana, Base, NEAR) plus OKX? Do not stop at
-two /rails rows. Do not claim the EarnFi marketplace is OKX-only.
+What EarnFi networks are supported? Answer with the four peers: Solana, Base,
+NEAR, OKX. Use tool_search for earnfi_x402_capabilities and register tools.
+Ask which wallet I already have. Do not invent a rails-vs-networks story.
+```
+
+```text
+What version is the EarnFi Hermes plugin, and what is the MCP server card version?
+Run /earnfi-status or earnfi_doctor and report both.
 ```
 
 ## Hire a human (Job)

@@ -11,12 +11,33 @@ import ssl
 import urllib.error
 import urllib.request
 from dataclasses import dataclass, field, asdict
+from pathlib import Path
 from typing import Any, Optional
 
 DEFAULT_MCP_URL = "https://app.earnfi.fun/mcp"
 DEFAULT_API_BASE = "https://app.earnfi.fun/api/ai-agent/v1"
 SERVER_CARD_URL = "https://app.earnfi.fun/.well-known/mcp/server-card.json"
 OKX_HEALTH_URL = "https://app.earnfi.fun/api/ai-agent/okx/v1/health"
+_PLUGIN_ROOT = Path(__file__).resolve().parents[1]
+
+# Product-facing peer networks (equal options for Hermes).
+PEER_NETWORKS = (
+    "Solana USDC",
+    "Base USDC (eip155:8453)",
+    "NEAR USDC (near:mainnet)",
+    "OKX X Layer USDT0 (eip155:196)",
+)
+
+
+def _read_plugin_version() -> str:
+    try:
+        text = (_PLUGIN_ROOT / "plugin.yaml").read_text(encoding="utf-8")
+        for line in text.splitlines():
+            if line.startswith("version:"):
+                return line.split(":", 1)[1].strip().strip('"').strip("'")
+    except OSError:
+        pass
+    return "unknown"
 
 # Core free reads the smoke test expects to exist on the live card.
 SMOKE_REQUIRED_TOOLS = (
@@ -59,17 +80,20 @@ class DoctorReport:
     readonly_tools: int = 0
     write_tools: int = 0
     server_version: str = ""
+    plugin_version: str = ""
     missing_smoke_tools: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         return {
             "overall_ok": self.overall_ok,
+            "plugin_version": self.plugin_version,
             "mcp_url": self.mcp_url,
             "api_base": self.api_base,
             "tool_count": self.tool_count,
             "readonly_tools": self.readonly_tools,
             "write_tools": self.write_tools,
             "server_version": self.server_version,
+            "peer_networks": list(PEER_NETWORKS),
             "missing_smoke_tools": self.missing_smoke_tools,
             "checks": [asdict(c) for c in self.checks],
         }
@@ -79,10 +103,16 @@ class DoctorReport:
             "EarnFi system status",
             "====================",
             f"Overall: {'OK' if self.overall_ok else 'ISSUES DETECTED'}",
+            f"Hermes plugin version: {self.plugin_version or 'unknown'}",
+            f"MCP server card version: {self.server_version or 'unknown'}",
             f"MCP endpoint: {self.mcp_url}",
             f"Agent API base: {self.api_base}",
             "",
+            "Supported networks (peer options):",
         ]
+        for net in PEER_NETWORKS:
+            lines.append(f"  - {net}")
+        lines.append("")
         for c in self.checks:
             mark = "PASS" if c.ok else "FAIL"
             lines.append(f"[{mark}] {c.name}: {c.detail}")
@@ -92,8 +122,6 @@ class DoctorReport:
                 f"Tool discovery: {self.tool_count} tools "
                 f"({self.readonly_tools} read-only, {self.write_tools} write/payment)"
             )
-        if self.server_version:
-            lines.append(f"Server card version: {self.server_version}")
         if self.missing_smoke_tools:
             lines.append(
                 "Missing expected tools: " + ", ".join(self.missing_smoke_tools)
@@ -116,7 +144,7 @@ def _http_get_json(url: str, timeout: float = 20.0) -> tuple[int, Any]:
         url,
         headers={
             "Accept": "application/json",
-            "User-Agent": "earnfi-hermes-plugin/1.0.0",
+            "User-Agent": f"earnfi-hermes-plugin/{_read_plugin_version()}",
         },
         method="GET",
     )
@@ -144,7 +172,10 @@ def _http_probe(url: str, timeout: float = 15.0) -> tuple[bool, str]:
     """Best-effort reachability probe (GET). MCP Streamable HTTP may not be a plain JSON GET."""
     req = urllib.request.Request(
         url,
-        headers={"User-Agent": "earnfi-hermes-plugin/1.0.0", "Accept": "*/*"},
+        headers={
+            "User-Agent": f"earnfi-hermes-plugin/{_read_plugin_version()}",
+            "Accept": "*/*",
+        },
         method="GET",
     )
     ctx = ssl.create_default_context()
@@ -327,6 +358,7 @@ def run_doctor(
         readonly_tools=readonly,
         write_tools=write,
         server_version=version,
+        plugin_version=_read_plugin_version(),
         missing_smoke_tools=missing,
     )
 

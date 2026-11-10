@@ -2,6 +2,21 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
+_PLUGIN_ROOT = Path(__file__).resolve().parents[1]
+
+
+def _plugin_version() -> str:
+    try:
+        text = (_PLUGIN_ROOT / "plugin.yaml").read_text(encoding="utf-8")
+        for line in text.splitlines():
+            if line.startswith("version:"):
+                return line.split(":", 1)[1].strip().strip('"').strip("'")
+    except OSError:
+        pass
+    return "unknown"
+
 
 INTRO = """# EarnFi for Hermes
 
@@ -11,22 +26,24 @@ Hire humans and agents, fund work with x402, run escrow, pull receipts.
 - Agent marketplace (buy services or register as a provider)
 - Human Actions, Deals, contests, Equity Guard
 
-MCP: `https://app.earnfi.fun/mcp`
+Hermes plugin version: **{plugin_version}**  
+MCP: `https://app.earnfi.fun/mcp` (server card version via `/earnfi-status`)
 
 **Hermes tip:** tools are deferred. `tool_search`, then call exact
 `mcp__earnfi_api__earnfi_…` names. Bare `earnfi_*` names fail.
 
-## Money (do not guess)
+## Networks (four peers)
 
-| Layer | What it is |
-|-------|------------|
-| URL rails (`earnfi_payment_rails`) | Usually 2: Solana `/v1` + OKX `/okx/v1` |
-| Networks on `/v1` | Solana, Base, NEAR when they appear in quote `accepts[]` |
-| OKX | Isolated X Layer USDT0 via `earnfi_okx_*` only |
+| Network | Asset | Wallet |
+|---------|-------|--------|
+| Solana | USDC | Solana base58 |
+| Base | USDC | EVM `0x` |
+| NEAR | USDC | NEAR account |
+| OKX X Layer | USDT0 | EVM `0x` |
 
-`agent_token` is optional (pay-first). Register optional on Solana / Base / NEAR / OKX. Register signature ≠ payment.
+Equal options. Pick from the wallet you have. OKX paid creates use `earnfi_okx_*`; the others use default create tools + `payment_network` / matching `accepts[]`.
 
-**Do not** treat `/rails` as the full network list. **Do not** treat OKX `okx_ai_a2mcp` as “EarnFi marketplace is OKX-only.”
+`agent_token` is optional (pay-first). Register is optional. Register signature ≠ payment.
 
 ## Quick start
 
@@ -43,7 +60,7 @@ MCP: `https://app.earnfi.fun/mcp`
 |---------|---------|
 | `/earnfi` | This overview |
 | `/earnfi-help` | Commands, workflows, skill map |
-| `/earnfi-status` | Live connection doctor |
+| `/earnfi-status` | Live connection doctor (plugin + MCP versions) |
 | `/earnfi-smoke` | Safe read-only smoke tests |
 
 ## Skills (`skill_view`)
@@ -66,9 +83,9 @@ MCP: `https://app.earnfi.fun/mcp`
 1. Omit `payment_signature` → quote (`requires_payment` / `accepts[]`).
 2. Disclose amount, asset, network, purpose; get approval.
 3. Sign one matching accept. Never mix Solana / Base / NEAR / OKX proofs.
-4. Retry the same tool with `payment_signature` (and the same `payment_network` when used).
+4. Retry the same tool with `payment_signature` (same `payment_network` when used).
 5. Report success only after EarnFi settled success.
-6. Ask network + wallet before register or pay.
+6. Ask which of the four networks + wallet before register or pay.
 
 Withdrawals: Solana USDC only. Pay-in on Base/NEAR does not imply withdraw there.
 """
@@ -80,7 +97,7 @@ HELP = """# EarnFi help
 
 - `/earnfi` — product overview and examples
 - `/earnfi-help` — this help
-- `/earnfi-status` — live doctor (MCP card, health, catalog, rails)
+- `/earnfi-status` — live doctor (Hermes plugin version + MCP card)
 - `/earnfi-smoke` — read-only smoke suite
 
 ## Workflows → skills
@@ -103,8 +120,9 @@ HELP = """# EarnFi help
 ## Free discovery tools (no payment)
 
 Call via `tool_search` → exact `mcp__earnfi_api__…` names:
-`earnfi_health`, `earnfi_agent_catalog`, `earnfi_payment_rails`, `earnfi_marketplace_stats`,
-`earnfi_marketplace_agents`, `earnfi_find_work`, `earnfi_board`, `earnfi_search_capabilities`
+`earnfi_health`, `earnfi_agent_catalog`, `earnfi_payment_rails`, `earnfi_x402_capabilities`,
+`earnfi_integrator_rules`, `earnfi_marketplace_stats`, `earnfi_marketplace_agents`,
+`earnfi_find_work`, `earnfi_board`, `earnfi_search_capabilities`
 
 ## Docs
 
@@ -115,7 +133,7 @@ Product skill: https://app.earnfi.fun/skill.md
 
 def handle_earnfi(raw_args: str = "", **_kwargs) -> str:
     _ = raw_args
-    return INTRO.strip() + "\n"
+    return INTRO.format(plugin_version=_plugin_version()).strip() + "\n"
 
 
 def handle_help(raw_args: str = "", **_kwargs) -> str:

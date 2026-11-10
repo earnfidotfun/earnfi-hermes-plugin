@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.0 — 2026-11-10
+
+- Product model: **four peer networks** (Solana, Base, NEAR, OKX) — no rails-vs-networks user story
+- Doctor + `/earnfi` report Hermes plugin version separately from MCP server card
+- Skills ask which wallet/network; stop prioritizing Solana/OKX
+
 ## 1.2.2 — 2026-11-10
 
 - Hard-fix rails vs networks answers: `/rails` ≠ Solana/Base/NEAR accepts
