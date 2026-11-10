@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.2 — 2026-11-10
+
+- Hard-fix rails vs networks answers: `/rails` ≠ Solana/Base/NEAR accepts
+- Ban OKX-only marketplace conclusion from `okx_ai_a2mcp` hints
+- Provider/overview/troubleshooting templates for “how many rails/networks?”
+
 ## 1.2.1 — 2026-11-10
 
 - Refresh capability inventory for live MCP **2.1.0** (141 tools): Base/NEAR register, `payment_network`, integrator rules

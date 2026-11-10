@@ -7,10 +7,10 @@ Run /earnfi-status and summarise EarnFi connectivity and tool counts.
 ```
 
 ```text
-Use tool_search for earnfi payment rails and agent catalog, then call the
-exact mcp__earnfi_api__* tools. What Task types, Job policies, and networks
-show up? Distinguish Tasks from Jobs from the agent marketplace. Note that
-/rails URL rails are not the same as every network in a 402 accepts[] list.
+Use tool_search for earnfi payment rails and earnfi_x402_capabilities, then call
+the exact mcp__earnfi_api__* tools. How many URL rails exist, and which pay
+networks appear on /v1 accepts[] (Solana, Base, NEAR) plus OKX? Do not stop at
+two /rails rows. Do not claim the EarnFi marketplace is OKX-only.
 ```
 
 ## Hire a human (Job)

@@ -1,13 +1,13 @@
 ---
 name: earnfi-payments
 description: >-
-  EarnFi x402 payments on Hermes. Multichain accepts on /v1 (Solana, Base,
-  NEAR when quoted), optional payment_network filter, OKX USDT0 isolated rail,
-  pay-first with agent_token optional. Never report success from a signature alone.
+  EarnFi x402 payments on Hermes. Distinguish URL rails (/rails) from pay
+  networks (Solana/Base/NEAR accepts + OKX). Optional payment_network. Pay-first.
+  Never report success from a signature alone. Use for rails, networks, wallets, 402.
 license: MIT
 metadata:
   author: earnfi
-  version: "1.2.0"
+  version: "1.2.2"
   homepage: https://github.com/earnfidotfun/earnfi-hermes-plugin
 ---
 
@@ -15,68 +15,91 @@ metadata:
 
 Call MCP tools as `mcp__earnfi_api__…` via `tool_search` → `tool_call`. Never use bare `earnfi_*` names.
 
-Canonical product doc: https://app.earnfi.fun/skill.md (Agent API skill). Prefer MCP over inventing REST paths.
+Canonical product doc: https://app.earnfi.fun/skill.md
+
+## Critical: rails ≠ networks
+
+`earnfi_payment_rails` returns **URL-scoped rails** (today usually two):
+
+| Rail id | API base | Role |
+|---------|----------|------|
+| `solana-usdc-x402` (default) | `/api/ai-agent/v1` | Canonical multichain Agent API |
+| `okx-xlayer-usdt0` | `/api/ai-agent/okx/v1` | Isolated OKX / X Layer USDT0 |
+
+That list is **not** the full set of networks a user can pay or register on.
+
+On the **default** `/v1` rail, a paid-create quote’s `accepts[]` may include:
+
+| Network | CAIP-2 | Typical wallet / proof |
+|---------|--------|------------------------|
+| Solana USDC | `solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp` | Solana base58, `signed_tx` |
+| Base USDC | `eip155:8453` | EVM `0x`, Base x402 |
+| NEAR USDC | `near:mainnet` | NEAR account, `signedDelegateAction` when quoted |
+
+OKX adds **X Layer USDT0** (`eip155:196`) only through `earnfi_okx_*` tools.
+
+Register (optional named identity) maps to MCP tools, not to `/rails` row count:
+
+| Network | Tools |
+|---------|--------|
+| Solana | `earnfi_register_challenge` → `earnfi_register` |
+| Base | `earnfi_base_register_challenge` → `earnfi_base_register` |
+| NEAR | `earnfi_near_register_challenge` → `earnfi_near_register` |
+| OKX | `earnfi_okx_register_challenge` → `earnfi_okx_register` |
+
+### When the user asks “how many rails / networks?”
+
+Answer in **two layers**. Never stop at `/rails` alone.
+
+1. **URL rails** from `earnfi_payment_rails` (count + ids).
+2. **Pay / register networks** on the default rail: call `earnfi_x402_capabilities` and/or quote once without `payment_signature` (or cite live `accepts[]` from a recent quote). List every `network` that appears. Mention OKX as a separate rail.
+3. Say plainly: Base and NEAR are networks on the multichain `/v1` rail. They often do **not** appear as separate `/rails` ids. Doctor noting Base/NEAR register tools means those MCP tools exist, not that the networks are “not live.”
+
+### Do not misread OKX marketplace hints
+
+An OKX rail field like `marketplace.okx_ai_a2mcp` means OKX.AI **A2MCP catalog listing** for that rail. It does **not** mean EarnFi’s agent marketplace (`earnfi_marketplace_*`, provider services) is OKX-only.
+
+EarnFi marketplace browse/hire/provider tools are on the default MCP/Agent API path. Provider registration can be Solana, Base, NEAR, or OKX. Do **not** tell the user they must use OKX to list services.
 
 ## Pay flow
 
 ```
 Paid create without payment_signature
-  → 402 / requires_payment + accepts[] (+ hint / next_step when present)
-  → Disclose amount, asset, network; get user approval
-  → Sign ONE accept that matches the user's wallet
+  → 402 / requires_payment + accepts[] (+ hint / next_step)
+  → Disclose amount, asset, network; get approval
+  → Sign ONE accept matching the user’s wallet
   → Same tool, same args, plus payment_signature
-  → EarnFi 200 with job/order/deal id, secret, and agent_token when newly bound
+  → EarnFi 200: id, secret, agent_token when newly bound
 ```
 
-`agent_token` is optional on paid creates. Pay first; the paying wallet can bind on settle. Registration is optional and only for a named identity beforehand.
-
-Register signatures are never payment proofs. Do not put a register signature in `payment_signature`.
-
-## Two surfaces (do not conflate)
-
-**1. Multichain Agent API (`/api/ai-agent/v1`) — default MCP paid tools**
-
-One API base. A quote’s `accepts[]` may include:
-
-| Network | CAIP-2 | Wallet / proof |
-|---------|--------|----------------|
-| Solana USDC | `solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp` | Solana base58, `signed_tx` |
-| Base USDC | `eip155:8453` | EVM `0x`, Base x402 / EIP-3009 style as the quote documents |
-| NEAR USDC | `near:mainnet` | NEAR account, `signedDelegateAction` when quoted |
-
-Trust **this quote’s** `accepts[]`. Do not assume `accepts[0]`. Do not assume every network is always present. If a filter returns empty or `payment_network_unavailable`, omit the filter or pick another network that appears.
-
-Optional MCP arg `payment_network` (live on MCP 2.1.0+ paid creates) sends `X-Earnfi-Accepts-Filter`. Keep the same value on quote and pay. Aliases often work: `solana`, `base`, `near`, or full CAIP-2. If a stale session lacks the field, still pick the matching accept from `accepts[]` and sign that one.
-
-**2. OKX / X Layer (`/api/ai-agent/okx/v1`) — `earnfi_okx_*` only**
-
-USDT0 on `eip155:196`. EVM `paymentPayload`. Never send a Solana `signed_tx` to OKX tools, or an OKX payload to multichain `/v1` tools.
+`agent_token` is optional on paid creates. Register signatures are never payment proofs.
 
 ## Discovery each session
 
-1. `earnfi_payment_rails` — URL-scoped rails (today often `solana-usdc-x402` + `okx-xlayer-usdt0`). Useful, but **not** the full list of pay networks. Base and NEAR usually show up in quote `accepts[]`, not as separate `/rails` ids.
-2. `earnfi_agent_catalog` / `earnfi_agent_x402` / `earnfi_health` as needed.
-3. For payment rules in one shot, `tool_search` for `earnfi_integrator_rules` or `earnfi_x402_capabilities` when those tools exist on this MCP session.
+1. `earnfi_payment_rails` — URL rails only.
+2. `earnfi_x402_capabilities` / `earnfi_integrator_rules` — networks + rules.
+3. `earnfi_agent_catalog` / `earnfi_health` as needed.
+4. For a concrete network list, trust a fresh quote’s `accepts[]`.
 
-## Wallet ask (before signing)
+Optional `payment_network` on paid tools (MCP 2.1.0+) sends `X-Earnfi-Accepts-Filter`. Keep it the same on quote and pay. Aliases: `solana`, `base`, `near`, or full CAIP-2.
 
-Ask which network the user will pay on, and whether they already have that wallet. MCP never holds keys. Do not invent wallets or signatures.
+## Wallet ask
 
-Proof shapes must match the chosen accept. Solana ≠ Base ≠ NEAR ≠ OKX.
+Ask which **network** they will pay or register on, and whether they have that wallet. MCP never holds keys. Proof shapes: Solana ≠ Base ≠ NEAR ≠ OKX.
 
 ## Rules
 
 1. Quote first. Same args on the pay retry.
 2. One accept, one signature, matching network.
-3. Success only from EarnFi settled success, not from a local tx hash.
-4. Use `idempotency_key` when the tool allows it.
-5. Hermes `trust: untrusted` means write/payment tools need host approval.
-6. Automated withdrawals are Solana USDC only unless EarnFi docs say otherwise. Pay-in on Base or NEAR does not imply withdraw on those networks.
-7. On wrong-network or wrong-rail errors, re-quote and switch tools with the user. Do not declare EarnFi broken.
+3. Success only from EarnFi settled success.
+4. `idempotency_key` when allowed.
+5. Hermes `trust: untrusted` → host approval for write/payment tools.
+6. Withdrawals: Solana USDC only unless docs say otherwise.
+7. Wrong network → re-quote; do not declare EarnFi broken.
 
 ## Failure recovery
 
-- Quote expired → new quote, same params, no signature.
+- Quote expired → new quote, no signature.
 - Wrong network signature → re-quote; sign the matching accept.
 - `payment_network_unavailable` → omit filter or switch network; stay on MCP.
-- Settlement unclear → re-fetch job/order/deal and receipt tools.
+- Settlement unclear → re-fetch job/order/deal + receipt tools.

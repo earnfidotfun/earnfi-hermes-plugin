@@ -6,7 +6,7 @@ description: >-
 license: MIT
 metadata:
   author: earnfi
-  version: "1.2.0"
+  version: "1.2.2"
   homepage: https://github.com/earnfidotfun/earnfi-hermes-plugin
 ---
 
@@ -22,7 +22,9 @@ metadata:
 |---------|----------------|
 | Host unreachable | Network / DNS / TLS |
 | Few MCP tools / only doctor | MCP server named `earnfi` colliding with native toolset; rename to `earnfi-api`, reload |
-| Missing `earnfi_base_register_*` / `earnfi_near_register_*` / `payment_network` | Stale MCP session or old server. `/reload-mcp` or new chat. Live card 2.1.0+ has them. Do not invent tools. |
+| Missing `earnfi_base_register_*` / `earnfi_near_register_*` / `payment_network` | Stale MCP session. `/reload-mcp` or new chat. Live card 2.1.0+ has them. |
+| “Only 2 networks” from `/rails` | `/rails` = URL rails. Also list `/v1` `accepts[]` (Solana/Base/NEAR) + OKX. See **earnfi-payments**. |
+| “Marketplace requires OKX” | Wrong. `okx_ai_a2mcp` ≠ EarnFi marketplace. Sellers can use Solana/Base/NEAR/OKX. |
 | Register 404 | Wrong network tool family or invented REST path |
 | 402 looping | Wrong network proof, params changed between quote and pay, or unpaid retry |
 | `payment_network_unavailable` | Filter not in this quote. Omit filter or switch network. Stay on MCP. |

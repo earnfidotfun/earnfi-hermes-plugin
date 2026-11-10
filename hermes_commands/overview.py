@@ -18,14 +18,15 @@ MCP: `https://app.earnfi.fun/mcp`
 
 ## Money (do not guess)
 
-| Surface | Networks |
-|---------|----------|
-| Multichain `/v1` (default MCP paid tools) | Quote `accepts[]` may include Solana USDC, Base (`eip155:8453`), NEAR (`near:mainnet`) |
-| OKX isolated | X Layer USDT0 via `earnfi_okx_*` only |
+| Layer | What it is |
+|-------|------------|
+| URL rails (`earnfi_payment_rails`) | Usually 2: Solana `/v1` + OKX `/okx/v1` |
+| Networks on `/v1` | Solana, Base, NEAR when they appear in quote `accepts[]` |
+| OKX | Isolated X Layer USDT0 via `earnfi_okx_*` only |
 
-`agent_token` is optional on paid creates (pay-first). Register is optional for a named identity: Solana, Base, NEAR, or OKX tools when present. Register signature ≠ payment signature.
+`agent_token` is optional (pay-first). Register optional on Solana / Base / NEAR / OKX. Register signature ≠ payment.
 
-`/rails` lists URL rails (often Solana + OKX). Base/NEAR appear in quote `accepts[]` and via `earnfi_base_register_*` / `earnfi_near_register_*` (MCP 2.1.0+).
+**Do not** treat `/rails` as the full network list. **Do not** treat OKX `okx_ai_a2mcp` as “EarnFi marketplace is OKX-only.”
 
 ## Quick start
 

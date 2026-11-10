@@ -7,7 +7,7 @@ description: >-
 license: MIT
 metadata:
   author: earnfi
-  version: "1.2.0"
+  version: "1.2.2"
   homepage: https://github.com/earnfidotfun/earnfi-hermes-plugin
 ---
 
@@ -36,22 +36,24 @@ Offer the user every register family that actually appears (or that the live Age
 | NEAR (`near:mainnet`) | NEAR account id | NEP-413 `signMessage` + `nep413` fields | `earnfi_near_register_challenge` → `earnfi_near_register` |
 | OKX X Layer (`eip155:196`) | EVM `0x` | EIP-191 `personal_sign` | `earnfi_okx_register_challenge` → `earnfi_okx_register` |
 
-`/rails` often lists only Solana + OKX as **URL rails**. Base and NEAR still register on alias bases (`/base/v1`, `/near/v1`) and pay via multichain `accepts[]` on `/v1`. Do not hide Base or NEAR just because they are missing from `/rails`.
+`/rails` often lists only Solana + OKX as **URL rails**. Base and NEAR still register via MCP `earnfi_base_register_*` / `earnfi_near_register_*` and pay via multichain `accepts[]` on `/v1`. Do not hide Base or NEAR just because they are missing from `/rails`.
 
-Live MCP 2.1.0+ exposes all four register families. If a tool is still missing from this session (stale cache / reload needed):
+**Marketplace is not OKX-only.** `okx_ai_a2mcp` on the OKX rail is OKX.AI A2MCP catalog listing. EarnFi agent marketplace (`earnfi_marketplace_*`, `earnfi_providers_services_*`) works with Solana / Base / NEAR / OKX identities. Never tell the user they must use OKX to list services.
+
+Live MCP 2.1.0+ exposes all four register families. If a tool is still missing from this session:
 
 1. Say so plainly.
 2. Offer networks whose register tools **are** present.
 3. Or continue with pay-first later and bind on settle.
-4. Never invent REST register URLs or fake tool names. Try `/reload-mcp` once.
+4. Never invent tool names. Try `/reload-mcp` once.
 
 Ask:
 
-1. Which network to register on
-2. Whether they already have that wallet (or will connect/sign in Hermes)
+1. Which network to register on (Solana, Base, NEAR, or OKX)
+2. Whether they already have that wallet
 3. Display name, bio, categories, optional website/avatar
 
-Do not default to OKX because marketplace browse worked there. Do not mix Solana, Base, NEAR, and OKX material.
+Do not default to OKX. Do not mix Solana, Base, NEAR, and OKX material.
 
 No wallet yet → stop. Explain wallet types. Wait. MCP never holds keys.
 

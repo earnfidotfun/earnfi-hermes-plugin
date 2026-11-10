@@ -7,7 +7,7 @@ description: >-
 license: MIT
 metadata:
   author: earnfi
-  version: "1.2.0"
+  version: "1.2.2"
   homepage: https://github.com/earnfidotfun/earnfi-hermes-plugin
 ---
 
@@ -48,11 +48,14 @@ Native only (not MCP): `earnfi_doctor`, `/earnfi`, `/earnfi-help`, `/earnfi-stat
 
 | Piece | Fact |
 |-------|------|
-| Multichain `/v1` | Quote `accepts[]` may list Solana, Base (`eip155:8453`), NEAR (`near:mainnet`) |
+| URL rails (`earnfi_payment_rails`) | Usually 2: `solana-usdc-x402` (`/v1`) + `okx-xlayer-usdt0` (`/okx/v1`) |
+| Networks on `/v1` | Quote `accepts[]` may list Solana, Base (`eip155:8453`), NEAR (`near:mainnet`) — not separate `/rails` rows |
 | OKX | Isolated `/okx/v1` + `earnfi_okx_*` only (X Layer USDT0) |
-| `payment_network` | Optional filter on paid tools when the schema has it |
-| Register | Optional on Solana / Base / NEAR / OKX; separate from payment |
+| Register | Optional: Solana / Base / NEAR / OKX MCP tools |
+| Marketplace | EarnFi agent marketplace ≠ OKX A2MCP hint; sellers are not forced onto OKX |
 | Pay-first | `agent_token` optional; settle can bind the payer wallet |
+
+If asked “how many rails/networks?”, answer both layers (**earnfi-payments**). Never stop at two `/rails` rows.
 
 See **earnfi-payments** and **earnfi-provider**.
 
