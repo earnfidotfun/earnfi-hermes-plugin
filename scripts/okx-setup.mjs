@@ -1,32 +1,13 @@
 #!/usr/bin/env node
 /**
  * EarnFi OKX / X Layer agent setup: generate EVM key + optional register.
- * Usage: node okx-setup.mjs --name "My Agent" [--dir PATH] [--skip-register]
+ * Secrets: Hermes profile env / secret scope only (OKX_PRIVATE_KEY, EARNFI_AGENT_TOKEN).
+ * Never reads or writes keystore files (catalog rule 11).
+ *
+ * Usage: node okx-setup.mjs --name "My Agent" [--skip-register]
  */
-import { spawnSync } from 'node:child_process';
-import fs from 'node:fs';
-import path from 'node:path';
-import { createRequire } from 'node:module';
-import { fileURLToPath } from 'node:url';
+import { arg, emitHermesStore, ensureNpm, has } from './lib-deps.mjs';
 
-path.dirname(fileURLToPath(import.meta.url));
-
-function arg(name, fallback = '') {
-  const i = process.argv.indexOf(name);
-  return i >= 0 && process.argv[i + 1] ? process.argv[i + 1] : fallback;
-}
-function has(flag) {
-  return process.argv.includes(flag);
-}
-
-const home = process.env.USERPROFILE || process.env.HOME || process.cwd();
-const defaultDir =
-  process.env.EARNFI_SECRETS_DIR ||
-  (process.env.LOCALAPPDATA
-    ? path.join(process.env.LOCALAPPDATA, 'hermes', 'secrets', 'earnfi')
-    : path.join(home, '.earnfi-agent'));
-
-const outDir = path.resolve(arg('--dir', defaultDir));
 const agentName = arg('--name', process.env.EARNFI_AGENT_NAME || 'earnfi-agent');
 const skipRegister = has('--skip-register');
 const apiBase = (
@@ -34,41 +15,17 @@ const apiBase = (
   'https://app.earnfi.fun/api/ai-agent/okx/v1'
 ).replace(/\/$/, '');
 
-fs.mkdirSync(outDir, { recursive: true });
-const pkg = path.join(outDir, 'package.json');
-if (!fs.existsSync(pkg)) fs.writeFileSync(pkg, '{"name":"earnfi-agent-secrets","private":true}\n');
-
-function ensureDeps() {
-  const req = createRequire(path.join(outDir, 'package.json'));
-  try {
-    req('ethers');
-    return;
-  } catch {
-    /* install */
-  }
-  const r = spawnSync('npm', ['install', 'ethers@6.13.5', '--no-fund', '--no-audit'], {
-    cwd: outDir,
-    stdio: 'inherit',
-    shell: true,
-  });
-  if (r.status !== 0) process.exit(r.status || 1);
-}
-
-ensureDeps();
-const require = createRequire(path.join(outDir, 'package.json'));
+const require = ensureNpm([{ name: 'ethers', spec: 'ethers@6.13.5' }]);
 const { Wallet } = require('ethers');
 
-const keyPath = path.join(outDir, 'okx.private.key');
-const tokenPath = path.join(outDir, 'agent_token.txt');
-
 let wallet;
+let hermesStoreRequired = false;
 if (process.env.OKX_PRIVATE_KEY) {
   wallet = new Wallet(process.env.OKX_PRIVATE_KEY.trim());
-} else if (fs.existsSync(keyPath)) {
-  wallet = new Wallet(fs.readFileSync(keyPath, 'utf8').trim());
 } else {
   wallet = Wallet.createRandom();
-  fs.writeFileSync(keyPath, wallet.privateKey, { mode: 0o600 });
+  hermesStoreRequired = true;
+  emitHermesStore('OKX_PRIVATE_KEY', wallet.privateKey);
 }
 
 const out = {
@@ -76,9 +33,11 @@ const out = {
   caip2: 'eip155:196',
   wallet_address: wallet.address,
   agent_name: agentName,
-  key_path: keyPath,
+  secret_env: 'OKX_PRIVATE_KEY',
+  hermes_store_required: hermesStoreRequired,
   registered: false,
-  token_stored: false,
+  token_env: 'EARNFI_AGENT_TOKEN',
+  token_store_required: false,
 };
 
 if (!skipRegister) {
@@ -114,13 +73,16 @@ if (!skipRegister) {
     process.exit(1);
   }
   out.registered = true;
-  if (data.agent_token) {
-    fs.writeFileSync(tokenPath, String(data.agent_token), { mode: 0o600 });
-    out.token_stored = true;
-    out.token_path = tokenPath;
-  }
   out.agent_name = data.agent_name || agentName;
+  if (data.agent_token) {
+    out.token_store_required = true;
+    emitHermesStore('EARNFI_AGENT_TOKEN', String(data.agent_token));
+  }
 }
 
 console.log(JSON.stringify(out, null, 2));
-console.error(`# Secret at ${keyPath} — do not paste into chat`);
+if (hermesStoreRequired || out.token_store_required) {
+  console.error(
+    '# Capture EARNFI_HERMES_STORE lines into Hermes secret scope / profile env. Never paste secrets into chat. Never write keystore files.'
+  );
+}

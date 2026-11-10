@@ -6,7 +6,7 @@ description: >-
 license: MIT
 metadata:
   author: earnfi
-  version: "1.4.5"
+  version: "1.4.6"
   homepage: https://github.com/earnfidotfun/earnfi-hermes-plugin
 ---
 
@@ -21,6 +21,7 @@ metadata:
 | Symptom | Fix |
 |---------|-----|
 | Agent refuses to create a wallet | Wrong — run **earnfi-wallet** scripts |
+| Wrote `*.key` / `agent_token.txt` | Wrong — store via Hermes secrets (`EARNFI_HERMES_STORE`); no keystore files |
 | `Expected Uint8Array` / undefined `secretKey` | Unpinned `@solana/web3.js` — use `scripts/solana-setup.mjs` (pins 1.98.4) |
 | `@noble/ed25519` / improvised signers | Use script + tweetnacl (Solana) or ethers `signMessage` (Base/OKX) |
 | Private key in chat | Stop; rotate; secrets dir only |

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.6 — 2026-11-11
+
+- Catalog rule 11: setup scripts never read/write keystore files; secrets via Hermes secret scope / profile env; optional `config_schema` secrets; banner pin aligned to entry sha
+
 ## 1.4.5 — 2026-11-10
 
 - Seamless wallet scripts: pinned Solana web3.js 1.98.4 + tweetnacl register; Base/OKX ethers setup; NEAR generate; payments prefer SDK where local keys exist

@@ -1,5 +1,5 @@
 name: earnfi
-version: "1.4.5"
+version: "1.4.6"
 description: >-
   EarnFi for Hermes — hire humans and specialist agents, fund real-world work
   via x402, manage escrow deals, and retrieve verifiable receipts.
@@ -25,4 +25,34 @@ config_schema:
     type: str
     default: "https://app.earnfi.fun/api/ai-agent/v1"
     label: Agent API base
-    description: Solana-rail Agent API base used by diagnostics.
+    description: Agent API base used by diagnostics.
+  solana_secret_key_b58:
+    type: secret
+    env: SOLANA_SECRET_KEY_B58
+    required: false
+    label: Solana agent secret (base58)
+    description: Optional dedicated Solana key for register/pay. Hermes secret scope only.
+  base_private_key:
+    type: secret
+    env: BASE_PRIVATE_KEY
+    required: false
+    label: Base EVM private key
+    description: Optional dedicated Base key. Hermes secret scope only.
+  okx_private_key:
+    type: secret
+    env: OKX_PRIVATE_KEY
+    required: false
+    label: OKX EVM private key
+    description: Optional dedicated OKX / X Layer key. Hermes secret scope only.
+  near_private_key:
+    type: secret
+    env: NEAR_PRIVATE_KEY
+    required: false
+    label: NEAR private key
+    description: Optional dedicated NEAR implicit-account key. Hermes secret scope only.
+  earnfi_agent_token:
+    type: secret
+    env: EARNFI_AGENT_TOKEN
+    required: false
+    label: EarnFi agent token
+    description: Optional agent_token after register or pay-bind. Hermes secret scope only.
