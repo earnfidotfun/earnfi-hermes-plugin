@@ -1,9 +1,13 @@
 # Changelog
 
+## 1.4.2 — 2026-11-10
+
+- Remove non-product operational wording from skills and docs
+
 ## 1.4.1 — 2026-11-10
 
 - Wallet: separate **Base** and **OKX** generators; full **NEAR** implicit-account create path
-- Strip internal hackathon/admin docs from the published package; agent boundary = public API/MCP only
+- Trim non-user docs from the package
 
 ## 1.4.0 — 2026-11-10
 

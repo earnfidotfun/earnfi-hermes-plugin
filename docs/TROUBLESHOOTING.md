@@ -45,7 +45,7 @@ Follow skill **earnfi-wallet**. Generate in terminal; never paste private keys i
 | MCP endpoint unreachable | Network / DNS / TLS / firewall |
 | Server card failed | Temporary outage or blocked `.well-known` |
 | Catalog/rails HTTP error | Agent API base path issue |
-| Missing smoke tools | Stale or unexpected MCP deployment |
+| Missing smoke tools | Stale MCP session or unexpected tool set |
 
 ## Payment loops on 402
 

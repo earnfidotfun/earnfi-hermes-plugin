@@ -84,8 +84,6 @@ md += `## Advertising policy
 Only claim a workflow after the corresponding tools appear on the live card and behave as documented. Align Hermes skills with https://app.earnfi.fun/skill.md.
 
 Hermes approval (\`trust: untrusted\`) gates write/payment tools that lack \`readOnlyHint: true\`. EarnFi server-side payment and settlement rules remain authoritative.
-
-Do not expose EarnFi WordPress, VPS, or admin-only operations in agent chat.
 `;
 
 fs.writeFileSync(path.join(root, "docs/CAPABILITIES.md"), md);

@@ -27,7 +27,6 @@ Networks: **Solana, Base, NEAR, OKX** (equal).
 4. Store the secret in Hermes secrets / env / a private file (`chmod 600`). Never commit it.
 5. Send signing material only to `https://app.earnfi.fun` via documented MCP tools.
 6. If the host cannot generate safely, ask the owner for a dedicated secret via their secret store — then continue.
-7. Do not discuss EarnFi WordPress, VPS, MCP deploy, or admin dashboards. Stay on Agent API / MCP / wallet flows.
 
 When the user names a network (“create your Base wallet”, “NEAR wallet”, …): run **that** section only.
 
