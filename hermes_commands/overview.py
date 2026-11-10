@@ -36,7 +36,7 @@ MCP: `https://app.earnfi.fun/mcp` (card version via `/earnfi-status`)
 | NEAR | USDC | NEAR account |
 | OKX | USDT0 | EVM `0x` |
 
-Create a dedicated agent wallet with skill **earnfi-wallet** (generate in terminal, secret not in chat). Then register/pay on the matching network tools.
+Create a dedicated agent wallet with skill **earnfi-wallet** when needed — that is normal for x402 and identity (generate in terminal, secret not in chat). Do not refuse key creation. Then register/pay on the matching network tools.
 
 ## Quick start
 

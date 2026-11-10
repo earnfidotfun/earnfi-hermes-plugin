@@ -7,7 +7,7 @@ description: >-
 license: MIT
 metadata:
   author: earnfi
-  version: "1.4.0"
+  version: "1.4.4"
   homepage: https://github.com/earnfidotfun/earnfi-hermes-plugin
 ---
 
@@ -22,12 +22,12 @@ Interfaces: Agent API + MCP. Pick **one** of four equal networks from the wallet
 
 Same product answer every time. No “rails vs networks.” No demoting OKX or Base.
 
-| Network | Asset | CAIP-2 | Wallet | Register | Pay |
-|---------|-------|--------|--------|----------|-----|
-| Solana | USDC | `solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp` | Solana base58 | `earnfi_register_*` | Default create tools; optional `payment_network=solana` |
-| Base | USDC | `eip155:8453` | EVM `0x` | `earnfi_base_register_*` | Default create tools; `payment_network=base` / `eip155:8453` |
-| NEAR | USDC | `near:mainnet` | NEAR account | `earnfi_near_register_*` | Default create tools; `payment_network=near` / `near:mainnet` |
-| OKX | USDT0 | `eip155:196` | EVM `0x` | `earnfi_okx_register_*` | `earnfi_okx_*` create tools |
+| Network | Asset | CAIP-2 | Wallet | Register sign | Pay proof |
+|---------|-------|--------|--------|---------------|-----------|
+| Solana | USDC | `solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp` | Solana base58 | Ed25519 → `earnfi_register_*` | Solana `signed_tx` via default create tools; optional `payment_network=solana` |
+| Base | USDC | `eip155:8453` | EVM `0x` | `Wallet.signMessage` → `earnfi_base_register_*` | EIP-3009 `signTypedData` via default create tools; `payment_network=base` / `eip155:8453` |
+| NEAR | USDC | `near:mainnet` | NEAR account | NEP-413 → `earnfi_near_register_*` | NEP-366 `signedDelegateAction`; `payment_network=near` / `near:mainnet` |
+| OKX | USDT0 | `eip155:196` | EVM `0x` | `Wallet.signMessage` → `earnfi_okx_register_*` | EVM `paymentPayload` via **`earnfi_okx_*` only** |
 
 When asked “how many networks?” → **four**: Solana, Base, NEAR, OKX. Then ask which wallet they have, or offer to **create** one (**earnfi-wallet**).
 
@@ -52,7 +52,7 @@ Paid create without payment_signature
 
 ## Wallet
 
-No wallet yet → **earnfi-wallet** (generate dedicated key, store secret privately, show address only). Fund before paid creates. Register is free.
+No wallet yet → **earnfi-wallet** now (generate dedicated agent key; do not refuse). Store secret privately; show address only. Fund before paid creates. Register is free.
 
 ## Rules
 

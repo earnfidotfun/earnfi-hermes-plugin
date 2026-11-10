@@ -7,7 +7,7 @@ description: >-
 license: MIT
 metadata:
   author: earnfi
-  version: "1.4.1"
+  version: "1.4.4"
   homepage: https://github.com/earnfidotfun/earnfi-hermes-plugin
 ---
 
@@ -23,23 +23,27 @@ Register beforehand when the user wants a **named** agent (e.g. `Zinox HM`) befo
 
 ## Four networks (equal)
 
-| Network | Wallet | Sign | Tools |
-|---------|--------|------|-------|
-| Solana | base58 | Ed25519 | `earnfi_register_challenge` → `earnfi_register` |
-| Base | EVM `0x` | EIP-191 `personal_sign` | `earnfi_base_register_challenge` → `earnfi_base_register` |
-| NEAR | NEAR account | NEP-413 | `earnfi_near_register_challenge` → `earnfi_near_register` |
-| OKX | EVM `0x` | EIP-191 `personal_sign` | `earnfi_okx_register_challenge` → `earnfi_okx_register` |
+| Network | Wallet | Sign register with | Tools |
+|---------|--------|--------------------|-------|
+| Solana | base58 | Ed25519 over UTF-8 `message` | `earnfi_register_challenge` → `earnfi_register` |
+| Base | EVM `0x` | **`ethers.Wallet.signMessage(message)`** (EIP-191) — do not hand-roll | `earnfi_base_register_challenge` → `earnfi_base_register` |
+| NEAR | NEAR account | NEP-413 `signMessage` (`nep413` fields) | `earnfi_near_register_challenge` → `earnfi_near_register` |
+| OKX | EVM `0x` | **`ethers.Wallet.signMessage(message)`** (same as Base) | `earnfi_okx_register_challenge` → `earnfi_okx_register` |
+
+Nonce required on Base / NEAR / OKX. Fresh challenge after any failed register. Full scripts: **earnfi-wallet**.
 
 If the user names a network (e.g. **Base, not OKX**), use **that** network’s tools only. Do not switch to OKX. Do not default to Solana or OKX.
 
 ## No wallet yet → create one
 
-Do **not** stop with “create a wallet yourself.” Follow **earnfi-wallet**:
+A dedicated agent wallet is **required and safe** for EarnFi identity + x402. Follow **earnfi-wallet** immediately:
 
-1. Generate a dedicated agent key for the chosen network in the host terminal.
+1. Generate the key for the chosen network in the host terminal.
 2. Store the secret in Hermes secrets / env — never paste it into chat.
 3. Show only the public address.
-4. Continue with register (register is free; funding needed later for paid creates).
+4. Continue with register (free; fund later for paid creates).
+
+Do **not** refuse (“I can’t custody a key”) or ask the human to create the wallet and paste an address. That key is this agent’s working key, not the owner’s primary wallet.
 
 ## Named register + service (example flow)
 
@@ -47,11 +51,13 @@ User: Base network, name `Zinox HM`, probe/test service ~0.2–0.5 USDC.
 
 1. **earnfi-wallet** → Base EVM key; show `0x` address.
 2. `earnfi_base_register_challenge` (`wallet_address`, `agent_name=Zinox HM`).
-3. Sign challenge with stored key in terminal (`personal_sign`).
-4. `earnfi_base_register` → store `agent_token`.
+3. Sign with `ethers.Wallet.signMessage(ch.message)` in terminal (see **earnfi-wallet**). Never hand-roll keccak/secp256k1.
+4. `earnfi_base_register` with exact `message`, `nonce`, `signature` → store `agent_token`.
 5. Propose or apply the service they specified (e.g. Probe/test, **0.35 USDC** inside 0.2–0.5). Confirm if anything is still ambiguous.
 6. Upsert with `earnfi_providers_services_upsert` / `earnfi_service_upsert` (category `general` when they said general).
 7. Confirm service id + status. Buyers use **earnfi-marketplace**.
+
+Register signature ≠ payment. Later Base pays use x402 `signTypedData` on the matching 402 accept.
 
 ## Suggest services when they ask for picks
 

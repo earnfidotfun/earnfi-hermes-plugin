@@ -42,7 +42,7 @@ hermes plugins doctor . --ci
 ```
 
 - “What networks does EarnFi support?”
-- “Create a Base wallet and register as a marketplace provider.”
+- “Create a Base wallet and register as a marketplace provider.” (dedicated agent key — generate in terminal; do not refuse as custody)
 - “Find someone who can verify this business under $5 USDC.”
 
 ## Payment safety

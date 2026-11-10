@@ -7,7 +7,7 @@ description: >-
 license: MIT
 metadata:
   author: earnfi
-  version: "1.4.1"
+  version: "1.4.4"
   homepage: https://github.com/earnfidotfun/earnfi-hermes-plugin
 ---
 
@@ -34,7 +34,7 @@ Native only: `earnfi_doctor`, `/earnfi`, `/earnfi-help`, `/earnfi-status`, `/ear
 | NEAR | USDC | NEAR account |
 | OKX | USDT0 | EVM `0x` |
 
-Same answer for “networks” and “rails.” Create a dedicated wallet with **earnfi-wallet** when needed.
+Same answer for “networks” and “rails.” Create a dedicated agent wallet with **earnfi-wallet** when needed — do not refuse key generation.
 
 ## Product map
 
@@ -62,4 +62,4 @@ Same answer for “networks” and “rails.” Create a dedicated wallet with *
 3. Never claim funded until EarnFi settled success.
 4. Withdrawals: Solana USDC only unless docs say otherwise.
 5. Do not invent tools or results.
-6. Before register/pay: pick one of the four networks; create a dedicated wallet if missing (**earnfi-wallet**). Never paste private keys into chat.
+6. Before register/pay: pick one of the four networks; create a dedicated agent wallet if missing (**earnfi-wallet**). Generating that key is expected for x402 + identity. Never paste private keys into chat; never refuse with “I can’t custody a wallet.”

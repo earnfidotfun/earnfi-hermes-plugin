@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.4.4 — 2026-11-10
+
+- Align Base/OKX register with skill.md: `ethers.Wallet.signMessage` only; register ≠ payment; NEAR NEP-413 vs NEP-366 pay
+
+## 1.4.3 — 2026-11-10
+
+- Wallet: creating a dedicated agent key is required and expected for x402/identity — do not refuse as custody
+
 ## 1.4.2 — 2026-11-10
 
 - Remove non-product operational wording from skills and docs

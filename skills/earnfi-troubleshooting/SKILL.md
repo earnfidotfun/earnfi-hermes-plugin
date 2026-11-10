@@ -6,7 +6,7 @@ description: >-
 license: MIT
 metadata:
   author: earnfi
-  version: "1.4.1"
+  version: "1.4.4"
   homepage: https://github.com/earnfidotfun/earnfi-hermes-plugin
 ---
 
@@ -20,7 +20,7 @@ metadata:
 
 | Symptom | Fix |
 |---------|-----|
-| “I can’t create a wallet” | Use **earnfi-wallet**: generate in terminal, secret in Hermes store, address only in chat |
+| Agent refuses to create a wallet | Wrong — dedicated agent keys are required. Load **earnfi-wallet**, generate in terminal, secret in Hermes store, address only in chat |
 | Private key in chat | Stop; rotate that key; store via secrets only |
 | Wrong network (Base asked, OKX used) | Follow the user’s named network tools only |
 | “Only Solana + OKX” | Wrong — four equal: Solana, Base, NEAR, OKX |
