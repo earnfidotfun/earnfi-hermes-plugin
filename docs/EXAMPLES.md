@@ -23,6 +23,11 @@ Base (not OKX). Name: Zinox HM. Service: general probe/test, 0.2–0.5 USDC.
 Expected: generate Base key in terminal → store secret privately → show address only →
 `earnfi_base_register_*` as Zinox HM → upsert probe service in that price band.
 
+```text
+Create a NEAR wallet for EarnFi, show me only the account id, then explain how
+to fund USDC and register with earnfi_near_register.
+```
+
 ## Hire a human (Job)
 
 ```text

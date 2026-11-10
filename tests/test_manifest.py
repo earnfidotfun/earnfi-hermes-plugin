@@ -34,13 +34,8 @@ class ManifestTests(unittest.TestCase):
 
     def test_no_cursor_branding_in_user_docs(self):
         banned = re.compile(r"\bCursor\b", re.I)
-        paths = [
-            p
-            for p in (ROOT / "docs").glob("*.md")
-            if p.name != "RELEASE-READINESS.md"
-        ] + [
+        paths = list((ROOT / "docs").glob("*.md")) + [
             ROOT / "README.md",
-            ROOT / "SUBMISSION.md",
         ]
         for skill in (ROOT / "skills").rglob("SKILL.md"):
             paths.append(skill)

@@ -47,12 +47,10 @@ assert(
 
 const banned = /\bCursor\b/i;
 const scan = [];
-for (const rel of ["README.md", "SUBMISSION.md", "CHANGELOG.md"]) {
+for (const rel of ["README.md", "CHANGELOG.md"]) {
   scan.push(path.join(root, rel));
 }
 for (const f of fs.readdirSync(path.join(root, "docs"))) {
-  // Internal gate doc may mention forbidden host names while auditing them.
-  if (f === "RELEASE-READINESS.md") continue;
   scan.push(path.join(root, "docs", f));
 }
 function walk(d) {

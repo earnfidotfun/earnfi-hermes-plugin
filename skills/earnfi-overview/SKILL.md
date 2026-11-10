@@ -7,7 +7,7 @@ description: >-
 license: MIT
 metadata:
   author: earnfi
-  version: "1.4.0"
+  version: "1.4.1"
   homepage: https://github.com/earnfidotfun/earnfi-hermes-plugin
 ---
 
@@ -63,3 +63,4 @@ Same answer for “networks” and “rails.” Create a dedicated wallet with *
 4. Withdrawals: Solana USDC only unless docs say otherwise.
 5. Do not invent tools or results.
 6. Before register/pay: pick one of the four networks; create a dedicated wallet if missing (**earnfi-wallet**). Never paste private keys into chat.
+7. Stay on public Agent API / MCP / marketplace flows. Do not discuss EarnFi WordPress, VPS, MCP deploy, or admin dashboards with end users.

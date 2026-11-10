@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.1 — 2026-11-10
+
+- Wallet: separate **Base** and **OKX** generators; full **NEAR** implicit-account create path
+- Strip internal hackathon/admin docs from the published package; agent boundary = public API/MCP only
+
 ## 1.4.0 — 2026-11-10
 
 - New **earnfi-wallet** skill: generate dedicated Solana/Base/NEAR/OKX agent keys (terminal), secrets out of chat
@@ -51,4 +56,4 @@
 - Streamable HTTP MCP to `https://app.earnfi.fun/mcp` with Hermes `trust: untrusted`
 - Eleven workflow skills for hiring, payments, marketplace, deals, Equity Guard, and more
 - Live MCP capability inventory (135 tools, server card 1.9.0)
-- Security, installation, examples and hackathon demo documentation
+- Security, installation, and examples documentation

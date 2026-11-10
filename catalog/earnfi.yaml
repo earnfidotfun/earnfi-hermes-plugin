@@ -1,5 +1,4 @@
-# Draft for NousResearch/hermes-agent plugin-catalog/earnfi.yaml
-# After each publish push, set `sha` and pin `image` to that full 40-hex commit.
+# Catalog entry draft (sha / image pin to published commits).
 
 name: earnfi
 repo: https://github.com/earnfidotfun/earnfi-hermes-plugin
@@ -12,7 +11,7 @@ maintainer: EarnFi
 tier: community
 category: tools
 requires_hermes: ">=0.23.0"
-version: "1.4.0"
+version: "1.4.1"
 title: EarnFi
 docs_url: https://docs.earnfi.fun
 readme: true
