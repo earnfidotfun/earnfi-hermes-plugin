@@ -22,7 +22,7 @@ metadata:
 |---------|----------------|
 | Host unreachable | Network / DNS / TLS |
 | Few MCP tools / only doctor | MCP server named `earnfi` colliding with native toolset; rename to `earnfi-api`, reload |
-| Missing `earnfi_base_register_*` / `earnfi_near_register_*` / `payment_network` | Hosted MCP behind Agent API skill. Say so. Offer Solana/OKX register tools that exist, or pay-first bind. Do not invent tools. |
+| Missing `earnfi_base_register_*` / `earnfi_near_register_*` / `payment_network` | Stale MCP session or old server. `/reload-mcp` or new chat. Live card 2.1.0+ has them. Do not invent tools. |
 | Register 404 | Wrong network tool family or invented REST path |
 | 402 looping | Wrong network proof, params changed between quote and pay, or unpaid retry |
 | `payment_network_unavailable` | Filter not in this quote. Omit filter or switch network. Stay on MCP. |

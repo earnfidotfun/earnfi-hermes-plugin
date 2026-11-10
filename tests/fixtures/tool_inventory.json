@@ -1,816 +1,571 @@
 {
-  "count": 135,
-  "version": "1.9.0",
+  "count": 141,
+  "version": "2.1.0",
+  "source": "https://app.earnfi.fun/.well-known/mcp/server-card.json",
   "tools": [
     {
+      "name": "earnfi_integrator_rules",
+      "ro": true
+    },
+    {
       "name": "earnfi_agent_catalog",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — catalog"
+      "ro": true
+    },
+    {
+      "name": "earnfi_x402_capabilities",
+      "ro": true
     },
     {
       "name": "earnfi_payment_rails",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — payment rails"
+      "ro": true
     },
     {
       "name": "earnfi_okx_catalog",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — OKX rail catalog (A2MCP)"
+      "ro": true
     },
     {
       "name": "earnfi_okx_info",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — OKX rail info"
+      "ro": true
     },
     {
       "name": "earnfi_okx_health",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — OKX rail health"
+      "ro": true
     },
     {
       "name": "earnfi_okx_register_challenge",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi OKX — EVM registration challenge"
+      "ro": true
     },
     {
       "name": "earnfi_okx_register",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi OKX — register EVM agent"
+      "ro": false
     },
     {
       "name": "earnfi_okx_social_create",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi OKX — create social job"
+      "ro": false
     },
     {
       "name": "earnfi_okx_manual_create",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi OKX — create manual job"
+      "ro": false
     },
     {
       "name": "earnfi_okx_contest_create",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi OKX — create contest"
+      "ro": false
     },
     {
       "name": "earnfi_okx_interrupt_create",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi OKX — human interrupt"
+      "ro": false
     },
     {
       "name": "earnfi_okx_ask_humans",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi OKX — ask humans"
+      "ro": false
     },
     {
       "name": "earnfi_okx_human_action_create",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi OKX — request a Human Action"
+      "ro": false
     },
     {
       "name": "earnfi_okx_human_review",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi OKX — human review"
+      "ro": false
     },
     {
       "name": "earnfi_okx_human_vote",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi OKX — human vote"
+      "ro": false
     },
     {
       "name": "earnfi_okx_human_test",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi OKX — human test"
+      "ro": false
     },
     {
       "name": "earnfi_okx_human_research",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi OKX — human research"
+      "ro": false
     },
     {
       "name": "earnfi_okx_human_verify",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi OKX — human verify"
+      "ro": false
     },
     {
       "name": "earnfi_okx_human_moderate",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi OKX — human moderate"
+      "ro": false
     },
     {
       "name": "earnfi_okx_human_feedback",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi OKX — human feedback"
+      "ro": false
     },
     {
       "name": "earnfi_agent_x402",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — x402 descriptor"
+      "ro": true
     },
     {
       "name": "earnfi_register_challenge",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — Solana registration challenge"
+      "ro": true
     },
     {
       "name": "earnfi_register",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — register Solana agent"
+      "ro": false
+    },
+    {
+      "name": "earnfi_base_register_challenge",
+      "ro": true
+    },
+    {
+      "name": "earnfi_base_register",
+      "ro": false
+    },
+    {
+      "name": "earnfi_near_register_challenge",
+      "ro": true
+    },
+    {
+      "name": "earnfi_near_register",
+      "ro": false
     },
     {
       "name": "earnfi_register_info",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — register agent (guide)"
+      "ro": true
     },
     {
       "name": "earnfi_social_create",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — create social job"
+      "ro": false
     },
     {
       "name": "earnfi_manual_create",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — create manual job"
+      "ro": false
     },
     {
       "name": "earnfi_contest_create",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — create contest"
+      "ro": false
     },
     {
       "name": "earnfi_interrupt_create",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — create interrupt"
+      "ro": false
     },
     {
       "name": "earnfi_get_interrupt",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — get interrupt"
+      "ro": true
     },
     {
       "name": "earnfi_human_action_create",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — human action"
+      "ro": false
     },
     {
       "name": "earnfi_ask_humans",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — human ask"
+      "ro": false
     },
     {
       "name": "earnfi_human_review",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — human review"
+      "ro": false
     },
     {
       "name": "earnfi_human_vote",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — human vote"
+      "ro": false
     },
     {
       "name": "earnfi_human_test",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — human test"
+      "ro": false
     },
     {
       "name": "earnfi_human_research",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — human research"
+      "ro": false
     },
     {
       "name": "earnfi_human_verify",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — human verify"
+      "ro": false
     },
     {
       "name": "earnfi_human_moderate",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — human moderate"
+      "ro": false
     },
     {
       "name": "earnfi_human_feedback",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — human feedback"
+      "ro": false
     },
     {
       "name": "earnfi_human_action_result",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — human action result"
+      "ro": true
     },
     {
       "name": "earnfi_get_job",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — get job"
+      "ro": true
     },
     {
       "name": "earnfi_list_submissions",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — list submissions"
+      "ro": true
     },
     {
       "name": "earnfi_list_completions",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — list completions"
+      "ro": true
     },
     {
       "name": "earnfi_get_job_detail",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — job detail"
+      "ro": true
     },
     {
       "name": "earnfi_get_job_users",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — job users"
+      "ro": true
     },
     {
       "name": "earnfi_get_job_payments",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — job payments"
+      "ro": true
     },
     {
       "name": "earnfi_list_contest_submissions",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — contest submissions"
+      "ro": true
     },
     {
       "name": "earnfi_mark_contest_winner",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — mark contest winner"
+      "ro": false
     },
     {
       "name": "earnfi_contest_leaderboard",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — contest leaderboard"
+      "ro": true
     },
     {
       "name": "earnfi_list_verifications",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — list verifications"
+      "ro": true
     },
     {
       "name": "earnfi_approve_verification",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — approve verification"
+      "ro": false
     },
     {
       "name": "earnfi_reject_verification",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — reject verification"
+      "ro": false
     },
     {
       "name": "earnfi_pause_job",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — pause/resume job"
+      "ro": false
     },
     {
       "name": "earnfi_update_job_metadata",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — update job metadata"
+      "ro": false
     },
     {
       "name": "earnfi_hire_listing_create",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — create hire listing"
+      "ro": false
     },
     {
       "name": "earnfi_hire_listing_update",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — update hire listing"
+      "ro": false
     },
     {
       "name": "earnfi_close_job",
-      "ro": false,
-      "dest": true,
-      "title": "EarnFi — close job"
+      "ro": false
     },
     {
       "name": "earnfi_health",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — aggregate health check"
+      "ro": true
     },
     {
       "name": "earnfi_get_profile",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — get agent profile"
+      "ro": true
     },
     {
       "name": "earnfi_update_profile",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — update agent profile"
+      "ro": false
     },
     {
       "name": "earnfi_import_identity",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — import external identity"
+      "ro": false
     },
     {
       "name": "earnfi_x_verification_generate_code",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — generate X verification code"
+      "ro": false
     },
     {
       "name": "earnfi_x_verification_verify",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — verify X post"
+      "ro": false
     },
     {
       "name": "earnfi_sync_said",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — sync SAID"
+      "ro": false
     },
     {
       "name": "earnfi_list_agent_jobs",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — list agent jobs"
+      "ro": true
     },
     {
       "name": "earnfi_get_agent_usage",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — agent usage stats"
+      "ro": true
     },
     {
       "name": "earnfi_find_work",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — find work"
+      "ro": true
     },
     {
       "name": "earnfi_board",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — work board"
+      "ro": true
     },
     {
       "name": "earnfi_search_capabilities",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — search capabilities"
+      "ro": true
     },
     {
       "name": "earnfi_marketplace_agents",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — marketplace agents"
+      "ro": true
     },
     {
       "name": "earnfi_marketplace_services",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — marketplace services"
+      "ro": true
     },
     {
       "name": "earnfi_open_work_list",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — open work gallery"
+      "ro": true
     },
     {
       "name": "earnfi_open_work_get",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — open work detail"
+      "ro": true
     },
     {
       "name": "earnfi_open_work_submit",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — submit open work"
+      "ro": false
     },
     {
       "name": "earnfi_open_work_accept",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — accept open work submission"
+      "ro": false
     },
     {
       "name": "earnfi_providers_services_list",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — list provider services"
+      "ro": true
     },
     {
       "name": "earnfi_providers_services_upsert",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — upsert provider service"
+      "ro": false
     },
     {
       "name": "earnfi_service_upsert",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — upsert service listing"
+      "ro": false
     },
     {
       "name": "earnfi_hire_worker",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — hire worker"
+      "ro": false
     },
     {
       "name": "earnfi_hire_agent",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — hire agent"
+      "ro": false
     },
     {
       "name": "earnfi_order_create",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — create agent order"
+      "ro": false
     },
     {
       "name": "earnfi_order_fund",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — fund agent order"
+      "ro": false
     },
     {
       "name": "earnfi_order_deliver",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — deliver agent order"
+      "ro": false
     },
     {
       "name": "earnfi_order_revision",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — order revision"
+      "ro": false
     },
     {
       "name": "earnfi_order_dispute",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — order dispute"
+      "ro": false
     },
     {
       "name": "earnfi_orders_mine",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — my agent orders"
+      "ro": true
     },
     {
       "name": "earnfi_agent_balance",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — agent earnings balance"
+      "ro": true
     },
     {
       "name": "earnfi_agent_withdraw",
-      "ro": false,
-      "dest": true,
-      "title": "EarnFi — withdraw earnings"
+      "ro": false
     },
     {
       "name": "earnfi_disputes_mine",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — list my order disputes"
+      "ro": true
     },
     {
       "name": "earnfi_dispute_get",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — get order dispute"
+      "ro": true
     },
     {
       "name": "earnfi_marketplace_stats",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — marketplace stats"
+      "ro": true
     },
     {
       "name": "earnfi_marketplace_leaderboard",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — marketplace leaderboard"
+      "ro": true
     },
     {
       "name": "earnfi_providers_service_status",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — provider service status"
+      "ro": false
     },
     {
       "name": "earnfi_thread_get",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — get work thread"
+      "ro": true
     },
     {
       "name": "earnfi_thread_messages",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — thread messages"
+      "ro": true
     },
     {
       "name": "earnfi_thread_send",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — send thread message"
+      "ro": false
     },
     {
       "name": "earnfi_receipt_get",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — get receipt"
+      "ro": true
     },
     {
       "name": "earnfi_reviews_mine",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — my reviews"
+      "ro": true
     },
     {
       "name": "earnfi_board_get",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — board listing"
+      "ro": true
     },
     {
       "name": "earnfi_submit_work",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — submit work"
+      "ro": false
     },
     {
       "name": "earnfi_check_work",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — check work"
+      "ro": true
     },
     {
       "name": "earnfi_release_payment",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — release payment"
+      "ro": false
     },
     {
       "name": "earnfi_release_work",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — release work"
+      "ro": false
     },
     {
       "name": "earnfi_get_receipt",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — verify receipt"
+      "ro": true
     },
     {
       "name": "earnfi_get_work_receipt",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — get work receipt"
+      "ro": true
     },
     {
       "name": "earnfi_work_review",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — submit work review"
+      "ro": false
     },
     {
       "name": "earnfi_token_rotate",
-      "ro": false,
-      "dest": true,
-      "title": "EarnFi — rotate agent token"
+      "ro": false
     },
     {
       "name": "earnfi_token_revoke",
-      "ro": false,
-      "dest": true,
-      "title": "EarnFi — revoke agent token"
+      "ro": false
     },
     {
       "name": "earnfi_agent_deal_create",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — create agent deal"
+      "ro": false
     },
     {
       "name": "earnfi_agent_deal_list",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — list agent deals"
+      "ro": true
     },
     {
       "name": "earnfi_agent_deal_get",
-      "ro": true,
-      "dest": false,
-      "title": "EarnFi — get agent deal"
+      "ro": true
     },
     {
       "name": "earnfi_agent_deal_accept",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — accept agent deal"
+      "ro": false
     },
     {
       "name": "earnfi_agent_deal_fund",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — fund agent deal"
+      "ro": false
     },
     {
       "name": "earnfi_agent_deal_deliver",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — deliver agent deal"
+      "ro": false
     },
     {
       "name": "earnfi_agent_deal_release",
-      "ro": false,
-      "dest": false,
-      "title": "EarnFi — release agent deal"
+      "ro": false
     },
     {
       "name": "equity_get_glossary",
-      "ro": true,
-      "dest": false,
-      "title": "Equity Guard — glossary"
+      "ro": true
     },
     {
       "name": "equity_search",
-      "ro": true,
-      "dest": false,
-      "title": "Equity Guard — search assets"
+      "ro": true
     },
     {
       "name": "equity_get_passport",
-      "ro": true,
-      "dest": false,
-      "title": "Equity Guard — asset passport"
+      "ro": true
     },
     {
       "name": "equity_get_market_state",
-      "ro": true,
-      "dest": false,
-      "title": "Equity Guard — market state"
+      "ro": true
     },
     {
       "name": "equity_preview_trade",
-      "ro": true,
-      "dest": false,
-      "title": "Equity Guard — preview trade"
+      "ro": true
     },
     {
       "name": "equity_authorize_trade",
-      "ro": true,
-      "dest": false,
-      "title": "Equity Guard — authorize trade"
+      "ro": true
     },
     {
       "name": "equity_check_trade",
-      "ro": true,
-      "dest": false,
-      "title": "Equity Guard — authorize trade (legacy name)"
+      "ro": true
     },
     {
       "name": "equity_simulate_trade",
-      "ro": true,
-      "dest": false,
-      "title": "Equity Guard — simulate trade"
+      "ro": true
     },
     {
       "name": "equity_prepare_execution",
-      "ro": true,
-      "dest": false,
-      "title": "Equity Guard — prepare execution"
+      "ro": true
     },
     {
       "name": "equity_confirm_execution",
-      "ro": true,
-      "dest": false,
-      "title": "Equity Guard — confirm execution"
+      "ro": true
     },
     {
       "name": "equity_verify_receipt",
-      "ro": true,
-      "dest": false,
-      "title": "Equity Guard — get receipt"
+      "ro": true
     },
     {
       "name": "equity_export_receipt",
-      "ro": true,
-      "dest": false,
-      "title": "Equity Guard — export receipt"
+      "ro": true
     },
     {
       "name": "equity_get_peg",
-      "ro": true,
-      "dest": false,
-      "title": "Equity Guard — peg history"
+      "ro": true
     },
     {
       "name": "equity_get_circuit_breaker",
-      "ro": true,
-      "dest": false,
-      "title": "Equity Guard — circuit breaker state"
+      "ro": true
     },
     {
       "name": "equity_get_liquidity",
-      "ro": true,
-      "dest": false,
-      "title": "Equity Guard — liquidity snapshot"
+      "ro": true
     },
     {
       "name": "equity_get_portfolio",
-      "ro": true,
-      "dest": false,
-      "title": "Equity Guard — portfolio scan"
+      "ro": true
     },
     {
       "name": "equity_protect_portfolio",
-      "ro": true,
-      "dest": false,
-      "title": "Equity Guard — portfolio protect plan"
+      "ro": true
     },
     {
       "name": "equity_list_corporate_actions",
-      "ro": true,
-      "dest": false,
-      "title": "Equity Guard — corporate actions"
+      "ro": true
     },
     {
       "name": "equity_meteora_pools",
-      "ro": true,
-      "dest": false,
-      "title": "Equity Guard — Meteora pools for mint"
+      "ro": true
     },
     {
       "name": "equity_meteora_claw_pools",
-      "ro": true,
-      "dest": false,
-      "title": "Equity Guard — CLAW Meteora pools"
+      "ro": true
     },
     {
       "name": "equity_meteora_stock_pairs",
-      "ro": true,
-      "dest": false,
-      "title": "Equity Guard — stock-paired Meteora suggestions"
+      "ro": true
     }
   ]
 }

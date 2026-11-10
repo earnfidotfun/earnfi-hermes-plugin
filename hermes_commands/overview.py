@@ -25,7 +25,7 @@ MCP: `https://app.earnfi.fun/mcp`
 
 `agent_token` is optional on paid creates (pay-first). Register is optional for a named identity: Solana, Base, NEAR, or OKX tools when present. Register signature ≠ payment signature.
 
-`/rails` lists URL rails (often Solana + OKX). Base/NEAR usually appear in quote `accepts[]` and via `earnfi_base_register_*` / `earnfi_near_register_*` when MCP exposes them.
+`/rails` lists URL rails (often Solana + OKX). Base/NEAR appear in quote `accepts[]` and via `earnfi_base_register_*` / `earnfi_near_register_*` (MCP 2.1.0+).
 
 ## Quick start
 

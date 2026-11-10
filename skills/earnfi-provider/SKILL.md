@@ -38,12 +38,12 @@ Offer the user every register family that actually appears (or that the live Age
 
 `/rails` often lists only Solana + OKX as **URL rails**. Base and NEAR still register on alias bases (`/base/v1`, `/near/v1`) and pay via multichain `accepts[]` on `/v1`. Do not hide Base or NEAR just because they are missing from `/rails`.
 
-If a register tool is missing from this MCP session (common when hosted MCP lags the Agent API):
+Live MCP 2.1.0+ exposes all four register families. If a tool is still missing from this session (stale cache / reload needed):
 
 1. Say so plainly.
 2. Offer networks whose register tools **are** present.
 3. Or continue with pay-first later and bind on settle.
-4. Never invent REST register URLs or fake tool names.
+4. Never invent REST register URLs or fake tool names. Try `/reload-mcp` once.
 
 Ask:
 

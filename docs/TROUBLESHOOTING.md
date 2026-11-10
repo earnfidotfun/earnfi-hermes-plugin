@@ -22,9 +22,9 @@
 - `earnfi_agent_catalog` ≠ marketplace agent list (`earnfi_marketplace_agents`)
 - `/rails` URL rails ≠ every network in a quote’s `accepts[]` (Base/NEAR often appear only in the quote)
 
-## MCP behind Agent API
+## Missing Base / NEAR / payment_network tools
 
-Hosted MCP may lag `https://app.earnfi.fun/skill.md`. If `earnfi_base_register_*`, `earnfi_near_register_*`, or `payment_network` are missing from `tool_search`, say so. Offer live register tools or pay-first bind. Do not invent tool names.
+Live MCP **2.1.0+** includes `earnfi_base_register_*`, `earnfi_near_register_*`, `earnfi_integrator_rules`, `earnfi_x402_capabilities`, and `payment_network` on paid creates. If `tool_search` cannot find them, reload MCP (`/reload-mcp`) or start a new session. Do not invent tool names.
 
 ## `/earnfi-status` failures
 

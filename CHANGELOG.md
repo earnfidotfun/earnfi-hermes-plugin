@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.1 — 2026-11-10
+
+- Refresh capability inventory for live MCP **2.1.0** (141 tools): Base/NEAR register, `payment_network`, integrator rules
+- Soften lag copy; verify script asserts multichain tools present
+
 ## 1.2.0 — 2026-11-10
 
 - Align with Agent API skill 2.1.3: multichain Solana/Base/NEAR accepts, OKX isolated, pay-first, optional register

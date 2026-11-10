@@ -224,10 +224,10 @@ def run_doctor(
                     "Base/NEAR register tools present on MCP card."
                     if not lag
                     else (
-                        "NOTE — hosted MCP lags Agent API skill.md; missing: "
+                        "NOTE — MCP card missing Base/NEAR register tools: "
                         + ", ".join(lag)
-                        + ". REST /base/v1 and /near/v1 register still work. "
-                        "Hermes should say MCP tools are missing and offer live alternatives."
+                        + ". Expect them on MCP 2.1.0+. Try reload; "
+                        "Hermes should say tools are missing and offer live alternatives."
                     )
                 ),
                 data={"missing": lag},

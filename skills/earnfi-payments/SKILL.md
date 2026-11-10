@@ -46,7 +46,7 @@ One API base. A quote’s `accepts[]` may include:
 
 Trust **this quote’s** `accepts[]`. Do not assume `accepts[0]`. Do not assume every network is always present. If a filter returns empty or `payment_network_unavailable`, omit the filter or pick another network that appears.
 
-Optional MCP arg `payment_network` (when the tool schema includes it) sends `X-Earnfi-Accepts-Filter`. Keep the same value on quote and pay. Aliases often work: `solana`, `base`, `near`, or full CAIP-2. If the live tool schema has no `payment_network`, still pick the matching accept from `accepts[]` and sign that one.
+Optional MCP arg `payment_network` (live on MCP 2.1.0+ paid creates) sends `X-Earnfi-Accepts-Filter`. Keep the same value on quote and pay. Aliases often work: `solana`, `base`, `near`, or full CAIP-2. If a stale session lacks the field, still pick the matching accept from `accepts[]` and sign that one.
 
 **2. OKX / X Layer (`/api/ai-agent/okx/v1`) — `earnfi_okx_*` only**
 

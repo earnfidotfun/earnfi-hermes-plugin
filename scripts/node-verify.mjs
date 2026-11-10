@@ -74,7 +74,23 @@ assert(skills.length >= 10, "skills count");
 const card = await get("https://app.earnfi.fun/.well-known/mcp/server-card.json");
 assert(card.status === 200, "server card HTTP");
 const cardJson = JSON.parse(card.body);
-assert((cardJson.tools || []).length === 135, "expected 135 tools");
+const toolNames = (cardJson.tools || []).map((t) => t.name);
+assert(toolNames.length >= 141, "expected >= 141 tools after MCP 2.1.0");
+for (const name of [
+  "earnfi_base_register",
+  "earnfi_base_register_challenge",
+  "earnfi_near_register",
+  "earnfi_near_register_challenge",
+  "earnfi_integrator_rules",
+  "earnfi_x402_capabilities",
+]) {
+  assert(toolNames.includes(name), "missing tool " + name);
+}
+const social = (cardJson.tools || []).find((t) => t.name === "earnfi_social_create");
+assert(
+  social?.inputSchema?.properties?.payment_network,
+  "earnfi_social_create missing payment_network"
+);
 
 const catalog = await get("https://app.earnfi.fun/api/ai-agent/v1/catalog");
 const rails = await get("https://app.earnfi.fun/api/ai-agent/v1/rails");

@@ -11,9 +11,9 @@ const domains = [
   [
     "Discovery & health",
     (t) =>
-      /health|catalog|rails|register_info|x402|find_work|board|search_capabilities|marketplace_stats|leaderboard/.test(
+      /health|catalog|rails|register_info|x402|integrator_rules|find_work|board|search_capabilities|marketplace_stats|leaderboard/.test(
         t
-      ) && !t.includes("okx"),
+      ) && !t.includes("okx") && !/base_register|near_register/.test(t),
   ],
   [
     "Identity & profile",
@@ -82,6 +82,8 @@ if (other.length) {
 md += `## Advertising policy
 
 Only claim a workflow after the corresponding tools appear on the live card and behave as documented. Optional rails (for example OKX) must be described as optional when health checks fail.
+
+Live MCP **${inv.version}** includes Solana / Base / NEAR register tools and optional \`payment_network\` on paid creates. Align Hermes skills with https://app.earnfi.fun/skill.md.
 
 Hermes approval (\`trust: untrusted\`) gates write/payment tools that lack \`readOnlyHint: true\`. EarnFi server-side payment and settlement rules remain authoritative.
 `;

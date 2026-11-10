@@ -1,21 +1,21 @@
 # EarnFi MCP capability inventory
 
 Source: live server card https://app.earnfi.fun/.well-known/mcp/server-card.json  
-Inventoried snapshot: **135** tools (regenerate with `node scripts/gen-capabilities.mjs` after MCP deploys).  
+Inventoried version: **2.1.0** — **141** tools  
 Classification uses MCP `readOnlyHint` annotations.
-
-Agent API skill https://app.earnfi.fun/skill.md also documents `earnfi_base_register_*`, `earnfi_near_register_*`, and optional `payment_network` on paid creates. If those are missing from the live card, hosted MCP is behind the API. Skills tell Hermes to say so and keep working with tools that exist.
 
 | Class | Count |
 |---|---|
-| Read-only | 69 |
-| Write / payment-capable | 66 |
+| Read-only | 73 |
+| Write / payment-capable | 68 |
 
 ## Discovery & health
 
 | Tool | Access |
 |---|---|
+| `earnfi_integrator_rules` | read-only |
 | `earnfi_agent_catalog` | read-only |
+| `earnfi_x402_capabilities` | read-only |
 | `earnfi_payment_rails` | read-only |
 | `earnfi_agent_x402` | read-only |
 | `earnfi_register_info` | read-only |
@@ -34,6 +34,10 @@ Agent API skill https://app.earnfi.fun/skill.md also documents `earnfi_base_regi
 |---|---|
 | `earnfi_register_challenge` | read-only |
 | `earnfi_register` | write/payment |
+| `earnfi_base_register_challenge` | read-only |
+| `earnfi_base_register` | write/payment |
+| `earnfi_near_register_challenge` | read-only |
+| `earnfi_near_register` | write/payment |
 | `earnfi_register_info` | read-only |
 | `earnfi_get_profile` | read-only |
 | `earnfi_update_profile` | write/payment |
@@ -202,6 +206,8 @@ Agent API skill https://app.earnfi.fun/skill.md also documents `earnfi_base_regi
 
 ## Advertising policy
 
-Only claim a workflow after the corresponding tools appear on the live card and behave as documented. Optional rails (for example OKX) must be described as optional when health checks fail. Multichain Base/NEAR register is live on the Agent API even when MCP has not caught up yet — do not invent MCP tool names.
+Only claim a workflow after the corresponding tools appear on the live card and behave as documented. Optional rails (for example OKX) must be described as optional when health checks fail.
+
+Live MCP **2.1.0** includes Solana / Base / NEAR register tools and optional `payment_network` on paid creates. Align Hermes skills with https://app.earnfi.fun/skill.md.
 
 Hermes approval (`trust: untrusted`) gates write/payment tools that lack `readOnlyHint: true`. EarnFi server-side payment and settlement rules remain authoritative.
