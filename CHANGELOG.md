@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.5 — 2026-11-10
+
+- Seamless wallet scripts: pinned Solana web3.js 1.98.4 + tweetnacl register; Base/OKX ethers setup; NEAR generate; payments prefer SDK where local keys exist
+
 ## 1.4.4 — 2026-11-10
 
 - Align Base/OKX register with skill.md: `ethers.Wallet.signMessage` only; register ≠ payment; NEAR NEP-413 vs NEP-366 pay

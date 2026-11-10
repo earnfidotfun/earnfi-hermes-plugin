@@ -1,154 +1,109 @@
 ---
 name: earnfi-wallet
 description: >-
-  Create a dedicated EarnFi agent wallet on Solana, Base, NEAR, or OKX for x402
-  payments and agent identity. Always generate when asked or when registering
-  without an address. Do not refuse as custody. Store secrets privately; show
-  only the public address. Base/OKX register with ethers Wallet.signMessage.
+  Seamless EarnFi agent wallet create + register on Solana, Base, NEAR, or OKX.
+  Always generate when asked. Do not refuse as custody. Use plugin scripts with
+  pinned deps. Show public address only; secrets stay on disk.
 license: MIT
 metadata:
   author: earnfi
-  version: "1.4.4"
+  version: "1.4.5"
   homepage: https://github.com/earnfidotfun/earnfi-hermes-plugin
 ---
 
-# Wallet setup (required for agents)
+# Wallet setup (seamless)
 
-Creating a **dedicated agent wallet** is normal EarnFi setup. That key is for **this agent’s** x402 payments and optional named registration — not the human’s main wallet, and not EarnFi custody.
+Creating a **dedicated agent wallet** is required EarnFi setup for x402 + identity — safe and expected.
 
-Canonical product doc: https://app.earnfi.fun/skill.md
+Canonical doc: https://app.earnfi.fun/skill.md
 
 ## Do this — do not refuse
 
-When the user says “create your Base wallet” / “create a wallet” / register without an address:
+When the user asks to create a wallet / register without an address:
 
-1. **Generate** the key for the named network (commands below).
-2. Store the secret in Hermes secrets / env / a private file.
-3. Reply with the **public address only**.
-4. Continue register / list services if they asked.
+1. Find this plugin’s `scripts/` directory (checkout or Hermes install tree).
+2. Run the **one** network script below (pinned packages — do not improvise unpinned `@solana/web3.js`).
+3. Reply with the **public address / account id only** from the JSON stdout.
+4. Continue provider listing or payments if asked.
 
-**Forbidden replies:** “I can’t create or custody a wallet”, “create one yourself and paste the address”, “I won’t hold a private key for you.” Those block EarnFi. Generating a dedicated agent key in the host terminal is the intended path.
+**Forbidden:** custody refusals; asking the human to create a wallet and paste an address; pasting private keys into chat; inventing alternate sign stacks (`@noble/ed25519` vs tweetnacl) when the script already works.
 
-## Safety (why this is OK)
+**Register ≠ payment.** Register proves control. Paid creates need a separate x402 proof (**earnfi-payments**).
 
-| Practice | Why |
-|----------|-----|
-| New agent key | Isolates EarnFi spend from the owner’s primary wallet |
-| Small working balance | Limits loss if the agent environment is compromised |
-| Secret out of chat | Never paste private keys, seeds, or raw secrets into the reply |
-| Sign only for EarnFi | Use the key for register challenges + x402 proofs to `app.earnfi.fun` |
+## Locate scripts
 
-EarnFi’s servers never hold the key. Hermes holds it locally for signing. That is expected agent identity + payment tooling.
-
-Networks: **Solana, Base, NEAR, OKX** (equal). Run only the section the user named.
-
-**Register ≠ payment.** Challenge signatures prove wallet control. Paid creates use `payment_signature` from the matching 402 `accept` (Solana tx / Base EIP-3009 `signTypedData` / NEAR `signedDelegateAction` / OKX EVM payload) — never reuse the register signature as payment.
-
-## Generate — Solana
+From a git checkout of `earnfi-hermes-plugin`:
 
 ```bash
-npm install @solana/web3.js bs58 --no-fund
-node -e "const{Keypair}=require('@solana/web3.js');const bs58=require('bs58');const k=Keypair.generate();console.log('Address:',k.publicKey.toBase58());console.log('SOLANA_SECRET_KEY_B58:',bs58.encode(k.secretKey))"
+cd /path/to/earnfi-hermes-plugin
 ```
 
-- Store `SOLANA_SECRET_KEY_B58` privately. Show only `Address:`.
-- Fund Solana USDC before paid creates. Register is free empty.
-- Register: `earnfi_register_challenge` → Ed25519 sign UTF-8 `message` → `earnfi_register` (include `nonce`).
-- Pay: default create tools; optional `payment_network=solana`.
+If installed by Hermes, search under the Hermes plugins/installs tree for `earnfi` / `scripts/solana-setup.mjs`. You may copy `scripts/*.mjs` into any working directory and run them from there.
 
-## Generate — Base
+Secrets default to `%LOCALAPPDATA%/hermes/secrets/earnfi` on Windows, else `~/.earnfi-agent`. Override with `--dir` or `EARNFI_SECRETS_DIR`.
+
+## Solana (generate + register)
+
+**Pinned:** `@solana/web3.js@1.98.4` + `bs58@5` + `tweetnacl@1` (do not install unpinned web3.js — v2 breaks `secretKey`).
 
 ```bash
-npm install ethers@6 --no-fund
-node -e "const {Wallet}=require('ethers'); const w=Wallet.createRandom(); console.log('Address:', w.address); console.log('BASE_PRIVATE_KEY:', w.privateKey);"
+node scripts/solana-setup.mjs --name "Media Buddy"
+# generate only:
+node scripts/solana-setup.mjs --name "Media Buddy" --skip-register
 ```
 
-- Store `BASE_PRIVATE_KEY` privately. Show only `Address:`.
-- Fund Base USDC before paid creates.
-- Register tools: `earnfi_base_register_challenge` → **`ethers.Wallet.signMessage(message)`** → `earnfi_base_register` (nonce required).
-- Pay: default create tools with `payment_network=eip155:8453` (or `base`). Settle uses **`signTypedData`** (EIP-3009 / x402) — separate from register.
+Stdout JSON: `wallet_address`, `registered`, `token_stored` (paths only). Secret: `solana.key.b58` in the secrets dir.
 
-**Register with ethers (required — do not hand-roll secp256k1):**
+MCP alternative after generate: `earnfi_register_challenge` → sign with tweetnacl over UTF-8 message → `earnfi_register` with `signature` as **byte array** (`Array.from(sig)`). Prefer the script.
+
+Optional after register: `npx --yes @earn-fi/agent-client earnfi-agent preflight --secret-key-bs58 "$(cat …/solana.key.b58)"` when an RPC is configured.
+
+## Base (generate + register)
+
+**Pinned:** `ethers@6`. Sign with **`Wallet.signMessage` only** (never hand-roll EIP-191).
 
 ```bash
-# BASE_PRIVATE_KEY must be set in the environment (not pasted into chat).
-node <<'NODE'
-const { Wallet } = require('ethers');
-const pk = process.env.BASE_PRIVATE_KEY;
-if (!pk) throw new Error('Set BASE_PRIVATE_KEY');
-const w = new Wallet(pk);
-(async () => {
-  const name = encodeURIComponent(process.env.EARNFI_AGENT_NAME || 'my-agent');
-  const ch = await fetch(
-    `https://app.earnfi.fun/api/ai-agent/base/v1/register/challenge?wallet_address=${w.address}&agent_name=${name}`
-  ).then((r) => r.json());
-  if (!ch.message) throw new Error(JSON.stringify(ch));
-  const signature = await w.signMessage(ch.message); // EIP-191; UTF-8 byte length
-  const body = {
-    wallet_address: w.address,
-    agent_name: ch.agent_name,
-    message: ch.message,
-    nonce: ch.nonce,
-    signature,
-  };
-  // Prefer MCP earnfi_base_register with the same fields when connected.
-  const res = await fetch('https://app.earnfi.fun/api/ai-agent/base/v1/register', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  }).then((r) => r.json());
-  console.log(JSON.stringify(res, null, 2));
-})().catch((e) => { console.error(e); process.exit(1); });
-NODE
+node scripts/base-setup.mjs --name "Zinox HM"
+node scripts/base-setup.mjs --name "Zinox HM" --skip-register
 ```
 
-**Do not** build `\x19Ethereum Signed Message:\n` + `message.length` yourself. Use `ethers` / `viem` / challenge `message_utf8_bytes`. After any failed register, fetch a **fresh** challenge (nonce is single-use).
+Pay later: `payment_network=eip155:8453` + EIP-3009 `signTypedData` (not the register signature). MCP: `earnfi_base_register_*`.
 
-One-liner when you already have the challenge message string:
+## OKX / X Layer (generate + register)
+
+Separate EVM key for USDT0 (`eip155:196`). Do not reuse Solana secrets.
 
 ```bash
-node -e "const {Wallet}=require('ethers'); const w=new Wallet(process.env.BASE_PRIVATE_KEY); w.signMessage(process.argv[1]).then(console.log);" "<challenge message>"
+node scripts/okx-setup.mjs --name "My Agent"
 ```
 
-## Generate — OKX
+Pay only via **`earnfi_okx_*`** create tools. MCP: `earnfi_okx_register_*`.
 
-Separate EVM key for OKX / X Layer USDT0 (`eip155:196`). Do **not** reuse Solana secrets or Solana `signed_tx`.
+## NEAR (generate)
 
 ```bash
-npm install ethers@6 --no-fund
-node -e "const {Wallet}=require('ethers'); const w=Wallet.createRandom(); console.log('Address:', w.address); console.log('OKX_PRIVATE_KEY:', w.privateKey);"
+node scripts/near-generate.mjs
 ```
 
-- Store `OKX_PRIVATE_KEY` privately. Show only `Address:`.
-- Fund USDT0 on X Layer before paid creates.
-- Register: `earnfi_okx_register_challenge` → **`ethers.Wallet.signMessage(message)`** (same EIP-191 rules as Base) → `earnfi_okx_register`.
-- Pay: **`earnfi_okx_*` create tools only** (isolated URL `/api/ai-agent/okx/v1`).
+Shows `account_id` (hex of ed25519 pubkey). Fund **NEAR + Circle USDC** before pay. Quote recipient: `earnfidotfun.near`.
 
-```bash
-node -e "const {Wallet}=require('ethers'); const w=new Wallet(process.env.OKX_PRIVATE_KEY); w.signMessage(process.argv[1]).then(console.log);" "<challenge message>"
-```
+- **Pay-first** binds `agent_token` without named register.
+- Named register: `earnfi_near_register_challenge` → NEP-413 `signMessage` using challenge `nep413` fields → `earnfi_near_register`. Payment settle uses NEP-366 `signedDelegateAction` (prefer `@earn-fi/agent-client` with `paymentNetwork: 'near:mainnet'`).
 
-## Generate — NEAR
-
-Implicit account: account id = hex of the ed25519 public key.
-
-```bash
-npm install near-api-js --no-fund
-node -e "const {KeyPair}=require('near-api-js'); const kp=KeyPair.fromRandom('ed25519'); const pk=kp.getPublicKey(); const accountId=Buffer.from(pk.data).toString('hex'); console.log('AccountId:', accountId); console.log('NEAR_PRIVATE_KEY:', kp.toString());"
-```
-
-- Store `NEAR_PRIVATE_KEY` privately. Show only `AccountId:`.
-- Fund NEAR (gas) + Circle USDC on `near:mainnet` before paid creates. Quote recipient: `earnfidotfun.near`.
-- Register: `earnfi_near_register_challenge` → **NEP-413 `signMessage`** using challenge `nep413` fields → `earnfi_near_register`.
-- Pay: default create tools with `payment_network=near:mainnet` (or `near`). Payment uses **`signedDelegateAction`** (NEP-366 / FastNEAR) — not the NEP-413 register proof.
-
-## After generate
+## After setup
 
 1. Show public id only.
-2. Matching `*_register_challenge` if they want a named agent.
-3. Sign in terminal with the stored secret (Base/OKX: `Wallet.signMessage`; Solana: Ed25519; NEAR: NEP-413).
-4. Matching `*_register` → store `agent_token`.
-5. Continue **earnfi-provider** for marketplace services when asked.
-6. For paid creates → **earnfi-payments** (quote → approve → settle).
+2. Store `agent_token` path privately if returned.
+3. **earnfi-provider** for marketplace services.
+4. **earnfi-payments** for funded creates (fund USDC/USDT0 first).
 
-If the host truly cannot run a generator (no terminal / no package install), say that once and ask for a dedicated agent secret via their secret store — not “I refuse to create wallets.”
+## Troubleshooting (wallet)
+
+| Symptom | Fix |
+|---------|-----|
+| `Expected Uint8Array` / `secretKey` undefined | Unpinned web3.js — use `scripts/solana-setup.mjs` (pins 1.98.4) |
+| `bs58` default export | Script uses `(bs58.default\|\|bs58)` |
+| Register connect failed | Retry script; check network to `app.earnfi.fun` |
+| Failed register nonce | Script fetches a fresh challenge each run |
+
+If the host cannot run Node/npm at all, ask once for a dedicated agent secret via Hermes secrets — not a custody refusal.

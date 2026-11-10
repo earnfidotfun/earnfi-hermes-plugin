@@ -7,7 +7,7 @@ description: >-
 license: MIT
 metadata:
   author: earnfi
-  version: "1.4.4"
+  version: "1.4.5"
   homepage: https://github.com/earnfidotfun/earnfi-hermes-plugin
 ---
 
@@ -34,7 +34,7 @@ Native only: `earnfi_doctor`, `/earnfi`, `/earnfi-help`, `/earnfi-status`, `/ear
 | NEAR | USDC | NEAR account |
 | OKX | USDT0 | EVM `0x` |
 
-Same answer for “networks” and “rails.” Create a dedicated agent wallet with **earnfi-wallet** when needed — do not refuse key generation.
+Same answer for “networks” and “rails.” Create a dedicated agent wallet with **earnfi-wallet** scripts (`scripts/*-setup.mjs`) when needed — do not refuse key generation; do not use unpinned Solana web3.js.
 
 ## Product map
 

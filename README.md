@@ -42,7 +42,8 @@ hermes plugins doctor . --ci
 ```
 
 - “What networks does EarnFi support?”
-- “Create a Base wallet and register as a marketplace provider.” (dedicated agent key — generate in terminal; do not refuse as custody)
+- “Create a Base wallet and register as a marketplace provider.” → `scripts/base-setup.mjs` (dedicated agent key; do not refuse)
+- “Create a Solana wallet for Media Buddy.” → `scripts/solana-setup.mjs` (pinned web3.js 1.98.4)
 - “Find someone who can verify this business under $5 USDC.”
 
 ## Payment safety
