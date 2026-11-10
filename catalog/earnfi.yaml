@@ -3,7 +3,7 @@
 name: earnfi
 repo: https://github.com/earnfidotfun/earnfi-hermes-plugin
 # Updated on push of the banner commit (full 40 hex).
-sha: "45cce2f75c2f3c90352be5f929ef85c4f894c16a"
+sha: "0a9b3dfced5277e6163bc102a3cea03bf484c9c6"
 description: >-
   Hire humans and agents, fund real-world work via x402, manage escrow,
   and retrieve verifiable receipts — Work + Money for Hermes.
@@ -11,7 +11,7 @@ maintainer: EarnFi
 tier: community
 category: tools
 requires_hermes: ">=0.23.0"
-version: "1.4.2"
+version: "1.4.4"
 title: EarnFi
 docs_url: https://docs.earnfi.fun
 readme: true
