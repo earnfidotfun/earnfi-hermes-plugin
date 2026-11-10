@@ -42,4 +42,4 @@ Open work gallery: `earnfi_open_work_list`, `earnfi_open_work_get`, `earnfi_open
 
 ## Seller / provider?
 
-If the user wants to **list services** or **register as an agent**, switch to **earnfi-provider** (rail + wallet first).
+If the user wants to **list services** or **register as an agent**, switch to **earnfi-provider** (network + wallet; create wallet via **earnfi-wallet** if needed).

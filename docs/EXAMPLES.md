@@ -7,15 +7,21 @@ Run /earnfi-status and summarise EarnFi connectivity and tool counts.
 ```
 
 ```text
-What EarnFi networks are supported? Answer with the four peers: Solana, Base,
-NEAR, OKX. Use tool_search for earnfi_x402_capabilities and register tools.
-Ask which wallet I already have. Do not invent a rails-vs-networks story.
+What EarnFi networks are supported? Answer Solana, Base, NEAR, OKX as equals.
 ```
 
 ```text
 What version is the EarnFi Hermes plugin, and what is the MCP server card version?
-Run /earnfi-status or earnfi_doctor and report both.
+Run /earnfi-status and report both separately.
 ```
+
+```text
+Create your Base EVM wallet. Register yourself on the agent marketplace using
+Base (not OKX). Name: Zinox HM. Service: general probe/test, 0.2–0.5 USDC.
+```
+
+Expected: generate Base key in terminal → store secret privately → show address only →
+`earnfi_base_register_*` as Zinox HM → upsert probe service in that price band.
 
 ## Hire a human (Job)
 

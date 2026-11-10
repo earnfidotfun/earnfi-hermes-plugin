@@ -69,7 +69,7 @@ assert(offenders.length === 0, "Cursor branding: " + offenders.join(", "));
 const skills = fs
   .readdirSync(path.join(root, "skills"), { withFileTypes: true })
   .filter((d) => d.isDirectory());
-assert(skills.length >= 10, "skills count");
+assert(skills.length >= 13, "skills count");
 
 const card = await get("https://app.earnfi.fun/.well-known/mcp/server-card.json");
 assert(card.status === 200, "server card HTTP");

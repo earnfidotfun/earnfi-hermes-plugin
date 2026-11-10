@@ -23,7 +23,7 @@ EARNFI_DOCTOR_SCHEMA = {
     "name": "earnfi_doctor",
     "description": (
         "Run EarnFi connection diagnostics: Hermes plugin version, MCP server "
-        "card version, four peer networks (Solana/Base/NEAR/OKX), tool discovery, "
+        "card version, four networks (Solana/Base/NEAR/OKX), tool discovery, "
         "Agent API health. Read-only; never settles payments. Use for version "
         "checks, connectivity, or troubleshooting."
     ),

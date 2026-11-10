@@ -22,10 +22,10 @@ _PLUGIN_ROOT = Path(__file__).resolve().parents[1]
 
 # Product-facing peer networks (equal options for Hermes).
 PEER_NETWORKS = (
-    "Solana USDC",
-    "Base USDC (eip155:8453)",
-    "NEAR USDC (near:mainnet)",
-    "OKX X Layer USDT0 (eip155:196)",
+    "Solana (USDC)",
+    "Base (USDC, eip155:8453)",
+    "NEAR (USDC, near:mainnet)",
+    "OKX (USDT0, eip155:196)",
 )
 
 

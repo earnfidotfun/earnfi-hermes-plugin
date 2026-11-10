@@ -9,7 +9,7 @@ Track status separately: **implemented** · **tested** · **verified** · **subm
 | `mcp.json` streamable-http + trust via `plugin.json` | implemented | Manifests |
 | Commands `/earnfi` `/earnfi-help` `/earnfi-status` `/earnfi-smoke` | implemented | `hermes_commands/` |
 | Doctor + smoke (live HTTP) | verified | `node scripts/node-verify.mjs` — 141 tools (MCP 2.1.0), catalog/rails 200 |
-| Hermes workflow skills (12) | implemented | `skills/` (+ earnfi-provider) |
+| Hermes workflow skills (13) | implemented | `skills/` (+ provider, wallet) |
 | CAPABILITIES inventory (141 tools) | verified against live card | `docs/CAPABILITIES.md` |
 | Docs + SECURITY disclosure | implemented | `docs/` |
 | Automated unit tests | implemented | `tests/` (CPython missing on build host; use `node-verify` + install Python to run unittest) |

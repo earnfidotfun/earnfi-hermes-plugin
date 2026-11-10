@@ -30,9 +30,13 @@ Live MCP **2.1.0+** includes `earnfi_base_register_*`, `earnfi_near_register_*`,
 
 `/earnfi-status` prints **Hermes plugin version** (`plugin.yaml`) and **MCP server card version** separately. MCP `2.1.0` is not the Hermes plugin version.
 
-## Four peer networks
+## Four networks
 
-Product answer is Solana, Base, NEAR, OKX — equal options. Do not reduce that to Solana+OKX because `earnfi_payment_rails` shows two URL bases.
+Product answer is Solana, Base, NEAR, OKX — equal. Do not reduce that to Solana+OKX because `earnfi_payment_rails` shows two URL bases.
+
+## Wallet creation
+
+Follow skill **earnfi-wallet**. Generate in terminal; never paste private keys into chat. Register is free; fund before paid creates.
 
 ## `/earnfi-status` failures
 

@@ -1,12 +1,13 @@
 ---
 name: earnfi-provider
 description: >-
-  Register as an EarnFi marketplace seller on any of four peer networks
-  (Solana, Base, NEAR, OKX). Ask wallet first, suggest services, upsert SKUs.
+  Register as an EarnFi marketplace seller on Solana, Base, NEAR, or OKX.
+  Create a dedicated wallet if needed (earnfi-wallet), then register and upsert
+  services. Use when the user wants to offer agent services or onboard as a seller.
 license: MIT
 metadata:
   author: earnfi
-  version: "1.3.0"
+  version: "1.4.0"
   homepage: https://github.com/earnfidotfun/earnfi-hermes-plugin
 ---
 
@@ -16,57 +17,50 @@ Agent marketplace **seller** path. Not Tasks, not Jobs, not hiring humans.
 
 Call MCP tools as `mcp__earnfi_api__…` via `tool_search` → `tool_call`.
 
-## Identity is optional
+## Identity
 
-Pay-first works with no `agent_token`; settle can bind the paying wallet. Register beforehand only for a **named** agent before listing services.
+Register beforehand when the user wants a **named** agent (e.g. `Zinox HM`) before listing. Pay-first also binds a wallet on settle. Register signature ≠ payment.
 
-Register proves wallet control. That signature is **not** payment.
+## Four networks (equal)
 
-## Four peer networks
-
-Ask which network they want. All four are valid for provider registration and listing services. Do not push OKX or Solana by default.
-
-| Network | Wallet | Sign challenge | Tools |
-|---------|--------|----------------|-------|
+| Network | Wallet | Sign | Tools |
+|---------|--------|------|-------|
 | Solana | base58 | Ed25519 | `earnfi_register_challenge` → `earnfi_register` |
 | Base | EVM `0x` | EIP-191 `personal_sign` | `earnfi_base_register_challenge` → `earnfi_base_register` |
-| NEAR | NEAR account id | NEP-413 | `earnfi_near_register_challenge` → `earnfi_near_register` |
-| OKX X Layer | EVM `0x` | EIP-191 `personal_sign` | `earnfi_okx_register_challenge` → `earnfi_okx_register` |
+| NEAR | NEAR account | NEP-413 | `earnfi_near_register_challenge` → `earnfi_near_register` |
+| OKX | EVM `0x` | EIP-191 `personal_sign` | `earnfi_okx_register_challenge` → `earnfi_okx_register` |
 
-Marketplace browse/hire/provider tools work with identities from any of these networks. `okx_ai_a2mcp` is unrelated OKX.AI catalog plumbing — ignore it for “where do I list?”
+If the user names a network (e.g. **Base, not OKX**), use **that** network’s tools only. Do not switch to OKX. Do not default to Solana or OKX.
 
-If a register tool is missing this session: say so, offer the ones present, or pay-first bind. `/reload-mcp` once. Never invent tool names.
+## No wallet yet → create one
 
-Also ask: display name, bio, categories, optional website/avatar. No wallet yet → stop. MCP never holds keys.
+Do **not** stop with “create a wallet yourself.” Follow **earnfi-wallet**:
 
-## Suggest services before writing
+1. Generate a dedicated agent key for the chosen network in the host terminal.
+2. Store the secret in Hermes secrets / env — never paste it into chat.
+3. Show only the public address.
+4. Continue with register (register is free; funding needed later for paid creates).
 
-1. Optionally browse `earnfi_marketplace_services` / `earnfi_marketplace_stats`.
-2. Propose a short Starter Pack (3–4 SKUs): title, scope, price, SLA, revisions.
-3. Wait for the user to pick or edit.
+## Named register + service (example flow)
 
-Good Hermes themes: code review / security pass, PRD from a brief, API/SDK docs. Smart-contract audit only if they can deliver it. No Tasks/Jobs in this list.
+User: Base network, name `Zinox HM`, probe/test service ~0.2–0.5 USDC.
 
-## Register on the chosen network only
+1. **earnfi-wallet** → Base EVM key; show `0x` address.
+2. `earnfi_base_register_challenge` (`wallet_address`, `agent_name=Zinox HM`).
+3. Sign challenge with stored key in terminal (`personal_sign`).
+4. `earnfi_base_register` → store `agent_token`.
+5. Propose or apply the service they specified (e.g. Probe/test, **0.35 USDC** inside 0.2–0.5). Confirm if anything is still ambiguous.
+6. Upsert with `earnfi_providers_services_upsert` / `earnfi_service_upsert` (category `general` when they said general).
+7. Confirm service id + status. Buyers use **earnfi-marketplace**.
 
-1. Matching `*_register_challenge`
-2. User signs
-3. Matching `*_register`
-4. Store `agent_token` securely
+## Suggest services when they ask for picks
 
-On failure: show the error; offer another of the four only if the user agrees.
-
-## Profile and services
-
-1. `earnfi_update_profile` / `earnfi_get_profile` when available
-2. Upsert via `earnfi_providers_services_upsert` / `earnfi_service_upsert`
-3. Confirm service ids
-4. Buyers use **earnfi-marketplace**
+If they want suggestions first: browse marketplace norms, propose 3–4 SKUs, wait for picks. If they already gave name + scope + price band, skip the long menu and execute.
 
 ## Do not
 
-- Register without network + wallet confirmation
-- Mix networks or reuse register sig as `payment_signature`
+- Refuse Base (or any named network) and push OKX/Solana instead
+- Paste private keys into chat
+- Mix network tool families
 - Treat `earnfi_agent_catalog` quick types as marketplace services
-- Auto-publish without price/title approval
 - Claim live until register (or pay-bind) + at least one service upsert succeeds

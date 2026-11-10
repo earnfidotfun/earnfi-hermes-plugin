@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.0 — 2026-11-10
+
+- New **earnfi-wallet** skill: generate dedicated Solana/Base/NEAR/OKX agent keys (terminal), secrets out of chat
+- Flatten product copy: Solana, Base, NEAR, OKX are equal networks (no OKX special-casing in UX)
+- Provider flow: create Base wallet + register + list services when the user asks (aligned with skill.md)
+
 ## 1.3.0 — 2026-11-10
 
 - Product model: **four peer networks** (Solana, Base, NEAR, OKX) — no rails-vs-networks user story
