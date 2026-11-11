@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.8 — 2026-11-11
+
+- README and catalog details: Work, Money & Execution Layer positioning; capabilities, innovation, and technical implementation
+
 ## 1.4.7 — 2026-11-11
 
 - Catalog banner refresh (2:1 `assets/earnfi-banner.jpg` / `.png`); keep pin `sha` and `image` on the same commit

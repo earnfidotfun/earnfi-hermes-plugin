@@ -7,7 +7,7 @@
 | Logo / icon | `assets/logo.png` | Square mark (`plugin.json` → `logo`) |
 | Catalog banner | `assets/earnfi-banner.jpg` | **2:1** (1200×600), brand blues `#1585EE` / `#0449B0` / `#1E2D93` |
 
-Desktop / catalog branding uses `assets/logo.png` and `assets/earnfi-banner.jpg`. `plugin.json` sets `title: EarnFi`.
+Desktop / catalog branding uses `assets/logo.png` and `assets/earnfi-banner.jpg`. `plugin.json` sets `title: EarnFi - Work, Money & Execution Layer`.
 
 ## MCP
 

@@ -6,7 +6,7 @@ description: >-
 license: MIT
 metadata:
   author: earnfi
-  version: "1.4.7"
+  version: "1.4.8"
   homepage: https://github.com/earnfidotfun/earnfi-hermes-plugin
 ---
 
