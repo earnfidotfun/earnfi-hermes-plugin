@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.7 — 2026-11-11
+
+- Catalog banner refresh (2:1 `assets/earnfi-banner.jpg` / `.png`); keep pin `sha` and `image` on the same commit
+
 ## 1.4.6 — 2026-11-11
 
 - Catalog rule 11: setup scripts never read/write keystore files; secrets via Hermes secret scope / profile env; optional `config_schema` secrets; banner pin aligned to entry sha
