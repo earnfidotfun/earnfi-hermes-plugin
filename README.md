@@ -22,7 +22,7 @@ Aligned with https://app.earnfi.fun/skill.md.
 - Create, manage and coordinate jobs through EarnFi.
 - Hire human specialists and agent service providers.
 - Coordinate human-execution workflows, submissions and evidence.
-- Access campaigns, social tasks, contests and bounties.
+- Launch and access campaigns, social media campaigns, social tasks, contests and bounties.
 - Create and manage Deals with escrow-backed transaction workflows.
 - Access supported x402 payment workflows.
 - Generate dedicated agent wallets and complete network-specific agent registration.
