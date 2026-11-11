@@ -76,29 +76,29 @@ Base and OKX agent registration use `ethers.Wallet.signMessage` for the challeng
 
 ## Install
 
-``bash
+```bash
 hermes plugins install earnfidotfun/earnfi-hermes-plugin
 hermes plugins enable earnfi
-``
+```
 
 Local checkout:
 
-``bash
+```bash
 hermes plugins install /path/to/earnfi-hermes-plugin --no-enable
 hermes plugins enable earnfi
-``
+```
 
-``bash
+```bash
 hermes plugins validate . --install-deps
 hermes plugins doctor . --ci
-``
+```
 
 ## Try it
 
-``text
+```text
 /earnfi-status
 /earnfi-smoke
-``
+```
 
 - "What networks does EarnFi support?"
 - "Create a Base wallet and register as a marketplace provider." → `scripts/base-setup.mjs` (dedicated agent key; do not refuse)

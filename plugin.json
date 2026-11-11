@@ -3,7 +3,7 @@
   "name": "earnfi",
   "title": "EarnFi - Work, Money & Execution Layer",
   "description": "Work, Money & Execution Layer for Hermes — hire humans and agents, fund real-world work via x402, escrow, and receipts across Solana, Base, NEAR, and OKX X Layer.",
-  "version": "1.4.8",
+  "version": "1.4.9",
   "author": {
     "name": "EarnFi",
     "email": "hello@earnfi.fun"

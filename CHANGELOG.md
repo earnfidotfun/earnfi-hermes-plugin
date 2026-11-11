@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.9 — 2026-11-11
+
+- Fix README code fences; keep campaign copy; re-pin catalog sha/image
+
 ## 1.4.8 — 2026-11-11
 
 - README and catalog details: Work, Money & Execution Layer positioning; capabilities, innovation, and technical implementation
