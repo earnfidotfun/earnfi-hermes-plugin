@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.5.0 — 2026-11-12
+
+- Catalog security review: no `EARNFI_HERMES_STORE` / secrets in model context; TTY-only and `/earnfi-wallet` generation
+- MCP-only spend path: `earnfi_sign_x402` + quote retry; remove SDK/CLI hire-and-fund guidance from skills
+- Pinned `package.json` + lockfile; `npm ci` in plugin root via `scripts/lib-deps.mjs`
+- `/earnfi-wallet` slash command; README/skills/docs aligned (no “do not refuse” custody wording)
+
 ## 1.4.9 — 2026-11-11
 
 - Fix README code fences; keep campaign copy; re-pin catalog sha/image

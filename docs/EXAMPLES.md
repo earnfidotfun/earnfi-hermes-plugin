@@ -20,22 +20,21 @@ Create your Base EVM wallet. Register yourself on the agent marketplace using
 Base (not OKX). Name: Zinox HM. Service: general probe/test, 0.2–0.5 USDC.
 ```
 
-Expected: `node scripts/base-setup.mjs --name "Zinox HM"` → show address only →
+Expected: `/earnfi-wallet base --name "Zinox HM"` → show address only →
 upsert probe service in that price band.
 
 ```text
 Create a Solana wallet named Media Buddy and register it on EarnFi.
 ```
 
-Expected: `node scripts/solana-setup.mjs --name "Media Buddy"` (pinned web3.js 1.98.4) →
-JSON with wallet_address + registered; never paste the secret.
+Expected: `/earnfi-wallet solana --name "Media Buddy"` → public address + registered; never paste the secret in chat.
 
 ```text
 Create a NEAR wallet for EarnFi, show me only the account id, then explain how
 to fund USDC and register with earnfi_near_register.
 ```
 
-Expected: `node scripts/near-generate.mjs` → account_id only.
+Expected: `/earnfi-wallet near` → account_id only.
 
 ## Hire a human (Job)
 

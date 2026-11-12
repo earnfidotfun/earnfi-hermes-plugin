@@ -1,5 +1,5 @@
 name: earnfi
-version: "1.4.9"
+version: "1.5.0"
 description: >-
   Work, Money & Execution Layer for Hermes — hire humans and agents, fund
   real-world work via x402, escrow, and receipts across Solana, Base, NEAR,
@@ -16,6 +16,7 @@ tags:
 requires_hermes: ">=0.23.0"
 provides_tools:
   - earnfi_doctor
+  - earnfi_sign_x402
 config_schema:
   mcp_url:
     type: str

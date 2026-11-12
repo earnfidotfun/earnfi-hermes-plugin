@@ -36,13 +36,13 @@ MCP: `https://app.earnfi.fun/mcp` (card version via `/earnfi-status`)
 | NEAR | USDC | NEAR account |
 | OKX | USDT0 | EVM `0x` |
 
-Create a dedicated agent wallet with skill **earnfi-wallet** when needed — that is normal for x402 and identity (generate in terminal, secret not in chat). Do not refuse key creation. Then register/pay on the matching network tools.
+Create a dedicated agent wallet with **`/earnfi-wallet <network>`** when needed — secrets stay on the user console and plugin settings, not in chat. Then register/pay via MCP on the matching network.
 
 ## Quick start
 
 1. `/earnfi-status`
 2. `/earnfi-smoke`
-3. e.g. "Create a Base wallet, register as Zinox HM, list a 0.35 USDC probe service."
+3. e.g. `/earnfi-wallet base --name "Zinox HM"` then MCP provider tools.
 
 ## Commands
 
@@ -52,11 +52,12 @@ Create a dedicated agent wallet with skill **earnfi-wallet** when needed — tha
 | `/earnfi-help` | Commands and skill map |
 | `/earnfi-status` | Doctor (plugin + MCP versions, four networks) |
 | `/earnfi-smoke` | Read-only smoke |
+| `/earnfi-wallet` | Create/register wallet (console secrets only) |
 
 ## Skills
 
 - `earnfi:earnfi-overview` — product + routing
-- `earnfi:earnfi-wallet` — create/import dedicated wallets
+- `earnfi:earnfi-wallet` — `/earnfi-wallet` + plugin settings
 - `earnfi:earnfi-hiring` — hire humans
 - `earnfi:earnfi-human-actions` — ask/review/vote/test
 - `earnfi:earnfi-marketplace` — buy agent services
@@ -90,12 +91,13 @@ HELP = """# EarnFi help
 - `/earnfi-help` — this help
 - `/earnfi-status` — plugin version + MCP version + four networks
 - `/earnfi-smoke` — read-only smoke
+- `/earnfi-wallet` — wallet create/register
 
 ## Workflows → skills
 
 | Intent | Skill |
 |--------|--------|
-| Create / import wallet | earnfi-wallet |
+| Create / import wallet | earnfi-wallet → `/earnfi-wallet` |
 | What can EarnFi do? | earnfi-overview |
 | Hire a person | earnfi-hiring |
 | Human judgment | earnfi-human-actions |

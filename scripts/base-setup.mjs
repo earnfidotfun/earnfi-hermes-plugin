@@ -1,21 +1,17 @@
 #!/usr/bin/env node
 /**
  * EarnFi Base agent setup: generate EVM key + optional register.
- * Secrets: Hermes profile env / secret scope only (BASE_PRIVATE_KEY, EARNFI_AGENT_TOKEN).
- * Never reads or writes keystore files (catalog rule 11).
- *
- * Usage: node base-setup.mjs --name "My Agent" [--skip-register]
+ * Prefer: /earnfi-wallet base --name "My Agent"
  */
-import { arg, emitHermesStore, ensureNpm, has } from './lib-deps.mjs';
+import { arg, has, pluginRequire, storeNewSecret } from './lib-deps.mjs';
 
 const agentName = arg('--name', process.env.EARNFI_AGENT_NAME || 'earnfi-agent');
 const skipRegister = has('--skip-register');
 const apiBase = (
-  process.env.EARNFI_BASE_API_BASE ||
-  'https://app.earnfi.fun/api/ai-agent/base/v1'
+  process.env.EARNFI_BASE_API_BASE || 'https://app.earnfi.fun/api/ai-agent/base/v1'
 ).replace(/\/$/, '');
 
-const require = ensureNpm([{ name: 'ethers', spec: 'ethers@6.13.5' }]);
+const require = pluginRequire();
 const { Wallet } = require('ethers');
 
 let wallet;
@@ -25,7 +21,7 @@ if (process.env.BASE_PRIVATE_KEY) {
 } else {
   wallet = Wallet.createRandom();
   hermesStoreRequired = true;
-  emitHermesStore('BASE_PRIVATE_KEY', wallet.privateKey);
+  storeNewSecret('BASE_PRIVATE_KEY', wallet.privateKey);
 }
 
 const out = {
@@ -34,10 +30,10 @@ const out = {
   wallet_address: wallet.address,
   agent_name: agentName,
   secret_env: 'BASE_PRIVATE_KEY',
-  hermes_store_required: hermesStoreRequired,
+  secret_saved_via: hermesStoreRequired ? 'console_once' : 'settings',
   registered: false,
   token_env: 'EARNFI_AGENT_TOKEN',
-  token_store_required: false,
+  token_saved_via: null,
 };
 
 if (!skipRegister) {
@@ -75,14 +71,9 @@ if (!skipRegister) {
   out.registered = true;
   out.agent_name = data.agent_name || agentName;
   if (data.agent_token) {
-    out.token_store_required = true;
-    emitHermesStore('EARNFI_AGENT_TOKEN', String(data.agent_token));
+    storeNewSecret('EARNFI_AGENT_TOKEN', String(data.agent_token));
+    out.token_saved_via = 'console_once';
   }
 }
 
 console.log(JSON.stringify(out, null, 2));
-if (hermesStoreRequired || out.token_store_required) {
-  console.error(
-    '# Capture EARNFI_HERMES_STORE lines into Hermes secret scope / profile env. Never paste secrets into chat. Never write keystore files.'
-  );
-}

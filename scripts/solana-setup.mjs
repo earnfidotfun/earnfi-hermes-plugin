@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 /**
  * EarnFi Solana agent setup: generate key (pinned web3.js 1.x) + optional register.
- * Secrets: Hermes profile env / secret scope only (SOLANA_SECRET_KEY_B58, EARNFI_AGENT_TOKEN).
+ * Secrets: Settings → Plugins → earnfi (SOLANA_SECRET_KEY_B58, EARNFI_AGENT_TOKEN).
  * Never reads or writes keystore files (catalog rule 11).
  *
  * Usage: node solana-setup.mjs --name "My Agent" [--skip-register]
+ * Prefer: /earnfi-wallet solana --name "My Agent"
  */
-import { arg, emitHermesStore, ensureNpm, has } from './lib-deps.mjs';
+import { arg, has, pluginRequire, storeNewSecret } from './lib-deps.mjs';
 
 const agentName = arg('--name', process.env.EARNFI_AGENT_NAME || 'earnfi-agent');
 const skipRegister = has('--skip-register');
@@ -15,11 +16,7 @@ const apiBase = (process.env.EARNFI_AGENT_API_BASE || 'https://app.earnfi.fun/ap
   ''
 );
 
-const require = ensureNpm([
-  { name: '@solana/web3.js', spec: '@solana/web3.js@1.98.4' },
-  { name: 'bs58', spec: 'bs58@5.0.0' },
-  { name: 'tweetnacl', spec: 'tweetnacl@1.0.3' },
-]);
+const require = pluginRequire();
 const { Keypair } = require('@solana/web3.js');
 const bs58mod = require('bs58');
 const bs58 = bs58mod.default || bs58mod;
@@ -32,7 +29,7 @@ if (process.env.SOLANA_SECRET_KEY_B58) {
 } else {
   kp = Keypair.generate();
   hermesStoreRequired = true;
-  emitHermesStore('SOLANA_SECRET_KEY_B58', bs58.encode(kp.secretKey));
+  storeNewSecret('SOLANA_SECRET_KEY_B58', bs58.encode(kp.secretKey));
 }
 
 const address = kp.publicKey.toBase58();
@@ -41,10 +38,10 @@ const out = {
   wallet_address: address,
   agent_name: agentName,
   secret_env: 'SOLANA_SECRET_KEY_B58',
-  hermes_store_required: hermesStoreRequired,
+  secret_saved_via: hermesStoreRequired ? 'console_once' : 'settings',
   registered: false,
   token_env: 'EARNFI_AGENT_TOKEN',
-  token_store_required: false,
+  token_saved_via: null,
 };
 
 if (!skipRegister) {
@@ -82,14 +79,9 @@ if (!skipRegister) {
   out.registered = true;
   out.agent_name = data.agent_name || agentName;
   if (data.agent_token) {
-    out.token_store_required = true;
-    emitHermesStore('EARNFI_AGENT_TOKEN', String(data.agent_token));
+    storeNewSecret('EARNFI_AGENT_TOKEN', String(data.agent_token));
+    out.token_saved_via = 'console_once';
   }
 }
 
 console.log(JSON.stringify(out, null, 2));
-if (hermesStoreRequired || out.token_store_required) {
-  console.error(
-    '# Capture EARNFI_HERMES_STORE lines into Hermes secret scope / profile env. Never paste secrets into chat. Never write keystore files.'
-  );
-}

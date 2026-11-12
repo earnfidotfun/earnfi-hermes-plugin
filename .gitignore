@@ -9,6 +9,7 @@ venv/
 .DS_Store
 *.log
 .hermes-test/
+node_modules/
 
 .cursor/
 

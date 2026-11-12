@@ -12,12 +12,46 @@ import logging
 from pathlib import Path
 
 from .doctor.checks import DEFAULT_API_BASE, DEFAULT_MCP_URL, PEER_NETWORKS, run_doctor
-from .hermes_commands import handle_earnfi, handle_help, handle_smoke, handle_status
+from .hermes_commands import handle_earnfi, handle_help, handle_smoke, handle_status, handle_wallet
+from .tools.sign_x402 import earnfi_sign_x402
 
 logger = logging.getLogger(__name__)
 
 _PLUGIN_ROOT = Path(__file__).resolve().parent
 _SKILLS_DIR = _PLUGIN_ROOT / "skills"
+
+EARNFI_SIGN_X402_SCHEMA = {
+    "name": "earnfi_sign_x402",
+    "description": (
+        "Build an x402 PAYMENT-SIGNATURE for an EarnFi 402 quote using wallet secrets "
+        "configured in Settings → Plugins → earnfi. Returns payment_signature only — "
+        "never private keys. Requires user approval before settling spend. After signing, "
+        "retry the same mcp__earnfi_api__ tool with payment_signature."
+    ),
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "payment_network": {
+                "type": "string",
+                "description": "CAIP-2 network from the quote accept (e.g. solana:5eykt4…, eip155:8453).",
+            },
+            "accepts": {
+                "type": "array",
+                "description": "accepts[] from the 402 quote (unchanged).",
+                "items": {"type": "object"},
+            },
+            "x402_version": {
+                "type": "integer",
+                "description": "x402Version from quote (default 2).",
+            },
+            "resource": {
+                "type": "object",
+                "description": "Optional resource object from quote.",
+            },
+        },
+        "required": ["payment_network", "accepts"],
+    },
+}
 
 EARNFI_DOCTOR_SCHEMA = {
     "name": "earnfi_doctor",
@@ -69,6 +103,12 @@ def register(ctx):
         schema=EARNFI_DOCTOR_SCHEMA,
         handler=earnfi_doctor,
     )
+    ctx.register_tool(
+        name="earnfi_sign_x402",
+        toolset="earnfi",
+        schema=EARNFI_SIGN_X402_SCHEMA,
+        handler=earnfi_sign_x402,
+    )
 
     ctx.register_command(
         "earnfi",
@@ -90,6 +130,11 @@ def register(ctx):
         handler=handle_smoke,
         description="Read-only EarnFi integration smoke tests",
     )
+    ctx.register_command(
+        "earnfi-wallet",
+        handler=handle_wallet,
+        description="Create/register dedicated agent wallet (console secrets only)",
+    )
 
     if _SKILLS_DIR.is_dir():
         for child in sorted(_SKILLS_DIR.iterdir()):
@@ -101,6 +146,6 @@ def register(ctx):
                     logger.warning("EarnFi skill registration skipped for %s: %s", child.name, exc)
 
     logger.info(
-        "EarnFi plugin registered (doctor tool, 4 slash commands, skills from %s)",
+        "EarnFi plugin registered (doctor + sign tools, 5 slash commands, skills from %s)",
         _SKILLS_DIR,
     )

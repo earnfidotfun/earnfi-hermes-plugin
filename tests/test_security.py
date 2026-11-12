@@ -8,6 +8,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
+_BANNED_IN_SKILLS = (
+    "do not refuse",
+    "EARNFI_HERMES_STORE",
+    "hireAndFund",
+    "npx earnfi-agent",
+)
 
 class SecurityTests(unittest.TestCase):
     def test_mcp_has_no_secrets(self):
@@ -33,6 +39,41 @@ class SecurityTests(unittest.TestCase):
         text = (ROOT / "docs/SECURITY.md").read_text(encoding="utf-8")
         self.assertIn("app.earnfi.fun", text)
         self.assertIn("x402", text)
+
+    def test_skills_forbid_custody_refusal_and_sdk_spend(self):
+        skills_root = ROOT / "skills"
+        for skill_md in skills_root.glob("*/SKILL.md"):
+            text = skill_md.read_text(encoding="utf-8").lower()
+            for needle in _BANNED_IN_SKILLS:
+                self.assertNotIn(needle, text, msg=f"{skill_md}: found {needle!r}")
+
+    def test_wallet_skill_routes_natural_language_to_slash(self):
+        text = (ROOT / "skills/earnfi-wallet/SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("/earnfi-wallet", text)
+        self.assertIn("generate a Solana wallet", text)
+
+    def test_readme_no_script_wallet_from_agent(self):
+        text = (ROOT / "README.md").read_text(encoding="utf-8").lower()
+        self.assertNotIn("do not refuse", text)
+        self.assertIn("/earnfi-wallet", text)
+
+    def test_emit_hermes_store_removed(self):
+        text = (ROOT / "scripts/lib-deps.mjs").read_text(encoding="utf-8")
+        self.assertIn("emitHermesStore removed", text)
+
+    def test_plugin_provides_sign_tool(self):
+        text = (ROOT / "plugin.yaml").read_text(encoding="utf-8")
+        in_provides = False
+        for line in text.splitlines():
+            if line.strip() == "provides_tools:":
+                in_provides = True
+                continue
+            if in_provides:
+                if line.startswith("  - earnfi_sign_x402"):
+                    return
+                if line and not line.startswith("  -"):
+                    break
+        self.fail("earnfi_sign_x402 not listed under provides_tools in plugin.yaml")
 
 
 if __name__ == "__main__":

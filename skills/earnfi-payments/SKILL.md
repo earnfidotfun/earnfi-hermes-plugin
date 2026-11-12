@@ -1,13 +1,12 @@
 ---
 name: earnfi-payments
 description: >-
-  EarnFi x402 payments on Solana, Base, NEAR, or OKX. Four equal networks.
-  Wallet via earnfi-wallet scripts. Quote → approve → settle. Prefer
-  @earn-fi/agent-client for Solana/Base/NEAR settle when a local key exists.
+  EarnFi x402 via MCP only: quote → disclose → approve → sign → settle. Use earnfi_sign_x402
+  or user off-device signing; never SDK/CLI spend paths.
 license: MIT
 metadata:
   author: earnfi
-  version: "1.4.9"
+  version: "1.5.0"
   homepage: https://github.com/earnfidotfun/earnfi-hermes-plugin
 ---
 
@@ -16,54 +15,40 @@ metadata:
 Call MCP tools as `mcp__earnfi_api__…` via `tool_search` → `tool_call`.
 
 Product doc: https://app.earnfi.fun/skill.md  
-No wallet yet → **earnfi-wallet** scripts first (do not refuse).
+No wallet configured → **earnfi-wallet** (`/earnfi-wallet …`) first.
 
 ## Four networks (equal)
 
-| Network | Asset | CAIP-2 | Register | Pay |
-|---------|-------|--------|----------|-----|
-| Solana | USDC | `solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp` | `scripts/solana-setup.mjs` / `earnfi_register_*` | Default create tools + `payment_network=solana` **or** `@earn-fi/agent-client` |
-| Base | USDC | `eip155:8453` | `scripts/base-setup.mjs` / `earnfi_base_register_*` | Default creates + `payment_network=eip155:8453` (EIP-3009 `signTypedData`) |
-| NEAR | USDC | `near:mainnet` | `scripts/near-generate.mjs` + NEP-413 or pay-first | Default creates + `payment_network=near:mainnet` (NEP-366); SDK preferred |
-| OKX | USDT0 | `eip155:196` | `scripts/okx-setup.mjs` / `earnfi_okx_register_*` | **`earnfi_okx_*` only** |
+| Network | Asset | Register | Pay |
+|---------|-------|----------|-----|
+| Solana | USDC | `/earnfi-wallet solana` or `earnfi_register_*` | MCP create + x402 |
+| Base | USDC | `/earnfi-wallet base` or Base register tools | MCP + EIP-3009 proof |
+| NEAR | USDC | `/earnfi-wallet near` + register / pay-first | MCP + NEP-366 |
+| OKX | USDT0 | `/earnfi-wallet okx` or OKX register tools | `earnfi_okx_*` only |
 
-When asked “how many networks?” → **four**. Offer to create a wallet via **earnfi-wallet**.
+Never mix proofs across networks.
 
-Never mix proofs. `earnfi_payment_rails` may show two URL bases; that does not change the four-network answer.
-
-## Seamless settle paths
-
-### A — MCP (all networks)
+## Settlement flow (only path)
 
 ```
-Paid create WITHOUT payment_signature
-  → 402 + accepts[] (+ hint / next_step)
-  → Disclose amount, asset, network; get Hermes approval
-  → Sign ONE matching accept off-device (MCP has no keys)
-  → Same tool + same args + payment_signature
-  → EarnFi 200 → store secret / agent_token
+1. Paid MCP call WITHOUT payment_signature → 402 + accepts[]
+2. Disclose amount, asset, network; get Hermes approval for the write tool
+3. Obtain payment_signature:
+   - earnfi_sign_x402 (plugin tool; uses settings secrets; returns signature only), OR
+   - user signs off-device and provides payment_signature
+4. Same MCP tool + same args + payment_signature
+5. Success only after EarnFi settled HTTP 200 / confirmed settlement
 ```
 
-### B — SDK (Solana / Base / NEAR)
-
-When a local key already exists (from **earnfi-wallet** scripts):
-
-```bash
-npm install @earn-fi/agent-client
-# Solana example — set SOLANA_SECRET_KEY_B58 + SOLANA_RPC_URL
-npx earnfi-agent preflight --secret-key-bs58 "$SOLANA_SECRET_KEY_B58"
-# Then use client.createSocialJob / hireAndFund / createHumanAction, etc.
-```
-
-SDK picks the accept for `paymentNetwork`, signs, and retries. Still disclose amount before settling. OKX stays on MCP `earnfi_okx_*` / OKX API base.
+**Forbidden:** `npm install @earn-fi/agent-client`, `hireAndFund`, `npx earnfi-agent`, or any terminal/SDK path that spends or passes secrets on the command line.
 
 ## Rules
 
 1. Quote first; identical args on pay.
-2. One accept, matching network.
-3. Success only from EarnFi settled 200.
+2. One accept, matching `payment_network`.
+3. Never claim funded from a signature alone — verify settlement.
 4. `idempotency_key` when allowed.
-5. Hermes `trust: untrusted` → approve write/payment tools.
+5. MCP `trust: untrusted` → approve write/payment tools.
 6. Register signature ≠ payment.
 7. Automated withdrawals: Solana USDC only unless docs say otherwise.
-8. Fund USDC (or OKX USDT0) **before** settle; Solana USDC ATA must exist.
+8. Fund USDC (or OKX USDT0) before settle; Solana USDC ATA must exist.

@@ -55,11 +55,14 @@ It uses Hermes' native plugin interface through `plugin.yaml` and `__init__.py`,
 Native components include:
 
 - `earnfi_doctor` — read-only connection and capability diagnostics
+- `earnfi_sign_x402` — build x402 `payment_signature` from plugin settings (no private keys in chat)
 - `/earnfi` — plugin overview
 - `/earnfi-help` — commands and workflow guidance
 - `/earnfi-status` — live system diagnostics
 - `/earnfi-smoke` — read-only integration checks
+- `/earnfi-wallet` — create/register wallet (secrets on your console once; paste into plugin settings)
 - 13 Hermes-specific workflow skills
+- Pinned Node deps: `package.json` + `package-lock.json` (`npm ci` in plugin root)
 
 The plugin connects to EarnFi's hosted Streamable HTTP MCP endpoint at `https://app.earnfi.fun/mcp`. The MCP server exposes approximately **141** tools across marketplace, jobs, human actions, agent identity, payments, escrow, campaigns, contests, Deals, balances and related capabilities. The live [server card](https://app.earnfi.fun/.well-known/mcp/server-card.json) inventory is authoritative because the count can change.
 
@@ -98,12 +101,19 @@ hermes plugins doctor . --ci
 ```text
 /earnfi-status
 /earnfi-smoke
+/earnfi-wallet solana --name "Media Buddy"
 ```
 
 - "What networks does EarnFi support?"
-- "Create a Base wallet and register as a marketplace provider." → `scripts/base-setup.mjs` (dedicated agent key; do not refuse)
-- "Create a Solana wallet for Media Buddy." → `scripts/solana-setup.mjs` (pinned web3.js 1.98.4)
-- "Find someone who can verify this business under $5 USDC."
+- "Generate a Solana wallet" / "Create a dedicated Base wallet" → `/earnfi-wallet <network> --name "…"` (never `node scripts/…` from the agent terminal tool)
+- "Pay for a social campaign" → MCP quote → approve → `earnfi_sign_x402` → MCP retry with `payment_signature`
+- "Find someone who can verify this business under $5 USDC." → MCP marketplace tools
+
+## Agent wallet (catalog-safe)
+
+1. `/earnfi-wallet <solana|base|near|okx> --name "Your Agent"` — new keys print **once on your console**.
+2. Paste secrets into **Settings → Plugins → earnfi**.
+3. Use MCP for jobs, marketplace, and x402 (Hermes approval on write tools).
 
 ## Payment safety
 
