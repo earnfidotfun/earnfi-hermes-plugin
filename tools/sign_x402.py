@@ -31,7 +31,11 @@ def earnfi_sign_x402(args: dict, **_kwargs) -> str:
         )
 
     try:
-        quote = parse_quote_json(quote_raw)
+        quote = (
+            parse_quote_json(quote_raw)
+            if isinstance(quote_raw, dict)
+            else parse_quote_json(str(quote_raw))
+        )
         pick_accept(quote, payment_network)
         if a.get("verify_replay", True):
             verify_quote_replay(quote, payment_network)
