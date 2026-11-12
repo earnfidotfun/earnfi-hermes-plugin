@@ -6,7 +6,7 @@ description: >-
 license: MIT
 metadata:
   author: earnfi
-  version: "1.5.0"
+  version: "1.5.1"
   homepage: https://github.com/earnfidotfun/earnfi-hermes-plugin
 ---
 
@@ -21,11 +21,13 @@ Canonical doc: https://app.earnfi.fun/skill.md
 When the user says things like “generate a Solana wallet”, “create a Base wallet for yourself”, or “set up NEAR for EarnFi”:
 
 1. Pick the network (Solana / Base / NEAR / OKX).
-2. Run **`/earnfi-wallet <network> --name "<agent name>"`** (default name `earnfi-agent` if omitted).
-3. Tell the user to paste any console-only secret into **Settings → Plugins → earnfi**.
-4. Reply with the **public address or NEAR account id only** from the command output.
+2. If no secret is in plugin settings: instruct the user to run the matching **`node scripts/*-setup.mjs`** in **their OS terminal** (not the model terminal). Secrets print once on the console.
+3. User pastes the secret into **Settings → Plugins → earnfi**.
+4. Run **`/earnfi-wallet <network> --name "<agent name>"`** to **register** (public output only).
 
-**Do not** run `node scripts/*-setup.mjs` via the terminal tool. **Do not** read or echo private keys, seeds, or `agent_token` in chat.
+**Do not** run `node scripts/*` via the terminal tool. `/earnfi-wallet` does not generate keys on gateway or headless hosts.
+
+**Do not** read or echo private keys, seeds, or `agent_token` in chat.
 
 ## Networks
 

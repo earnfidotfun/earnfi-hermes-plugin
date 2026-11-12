@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.1 — 2026-11-12
+
+- Wallet: fail closed without `/dev/tty`; remove `EARNFI_HERMES_WALLET_CMD`; `/earnfi-wallet` register-only from plugin settings
+- Sign: `pre_tool_call` approval with payTo/amount; `quote_json` + optional replay verify; minimal subprocess env
+- Wire `mcp_url` / `agent_api_base` plugin settings into doctor and slash commands
+
 ## 1.5.0 — 2026-11-12
 
 - Catalog security review: no `EARNFI_HERMES_STORE` / secrets in model context; TTY-only and `/earnfi-wallet` generation

@@ -36,7 +36,7 @@ MCP: `https://app.earnfi.fun/mcp` (card version via `/earnfi-status`)
 | NEAR | USDC | NEAR account |
 | OKX | USDT0 | EVM `0x` |
 
-Create a dedicated agent wallet with **`/earnfi-wallet <network>`** when needed — secrets stay on the user console and plugin settings, not in chat. Then register/pay via MCP on the matching network.
+Generate keys in the user’s OS terminal (`node scripts/*`), paste into plugin settings, then **`/earnfi-wallet <network>`** to register. Pay via MCP on the matching network (`earnfi_sign_x402` + approval).
 
 ## Quick start
 

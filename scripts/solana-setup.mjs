@@ -7,7 +7,14 @@
  * Usage: node solana-setup.mjs --name "My Agent" [--skip-register]
  * Prefer: /earnfi-wallet solana --name "My Agent"
  */
-import { arg, has, pluginRequire, storeNewSecret } from './lib-deps.mjs';
+import {
+  arg,
+  canGenerateKeysHere,
+  has,
+  pluginRequire,
+  refuseNonTtyGenerate,
+  storeNewSecret,
+} from './lib-deps.mjs';
 
 const agentName = arg('--name', process.env.EARNFI_AGENT_NAME || 'earnfi-agent');
 const skipRegister = has('--skip-register');
@@ -27,6 +34,9 @@ let hermesStoreRequired = false;
 if (process.env.SOLANA_SECRET_KEY_B58) {
   kp = Keypair.fromSecretKey(bs58.decode(process.env.SOLANA_SECRET_KEY_B58.trim()));
 } else {
+  if (!canGenerateKeysHere()) {
+    refuseNonTtyGenerate('SOLANA_SECRET_KEY_B58');
+  }
   kp = Keypair.generate();
   hermesStoreRequired = true;
   storeNewSecret('SOLANA_SECRET_KEY_B58', bs58.encode(kp.secretKey));

@@ -3,7 +3,12 @@
  * EarnFi NEAR implicit account generate.
  * Prefer: /earnfi-wallet near
  */
-import { pluginRequire, storeNewSecret } from './lib-deps.mjs';
+import {
+  canGenerateKeysHere,
+  pluginRequire,
+  refuseNonTtyGenerate,
+  storeNewSecret,
+} from './lib-deps.mjs';
 
 const require = pluginRequire();
 const { KeyPair } = require('near-api-js');
@@ -13,6 +18,9 @@ let hermesStoreRequired = false;
 if (process.env.NEAR_PRIVATE_KEY) {
   kp = KeyPair.fromString(process.env.NEAR_PRIVATE_KEY.trim());
 } else {
+  if (!canGenerateKeysHere()) {
+    refuseNonTtyGenerate('NEAR_PRIVATE_KEY');
+  }
   kp = KeyPair.fromRandom('ed25519');
   hermesStoreRequired = true;
   storeNewSecret('NEAR_PRIVATE_KEY', kp.toString());

@@ -3,7 +3,14 @@
  * EarnFi Base agent setup: generate EVM key + optional register.
  * Prefer: /earnfi-wallet base --name "My Agent"
  */
-import { arg, has, pluginRequire, storeNewSecret } from './lib-deps.mjs';
+import {
+  arg,
+  canGenerateKeysHere,
+  has,
+  pluginRequire,
+  refuseNonTtyGenerate,
+  storeNewSecret,
+} from './lib-deps.mjs';
 
 const agentName = arg('--name', process.env.EARNFI_AGENT_NAME || 'earnfi-agent');
 const skipRegister = has('--skip-register');
@@ -19,6 +26,9 @@ let hermesStoreRequired = false;
 if (process.env.BASE_PRIVATE_KEY) {
   wallet = new Wallet(process.env.BASE_PRIVATE_KEY.trim());
 } else {
+  if (!canGenerateKeysHere()) {
+    refuseNonTtyGenerate('BASE_PRIVATE_KEY');
+  }
   wallet = Wallet.createRandom();
   hermesStoreRequired = true;
   storeNewSecret('BASE_PRIVATE_KEY', wallet.privateKey);

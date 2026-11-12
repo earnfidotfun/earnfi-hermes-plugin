@@ -61,6 +61,38 @@ class SecurityTests(unittest.TestCase):
         text = (ROOT / "scripts/lib-deps.mjs").read_text(encoding="utf-8")
         self.assertIn("emitHermesStore removed", text)
 
+    def test_no_wallet_cmd_bypass_flag(self):
+        for path in (
+            ROOT / "scripts/lib-deps.mjs",
+            ROOT / "hermes_commands/wallet.py",
+        ):
+            text = path.read_text(encoding="utf-8")
+            self.assertNotIn("EARNFI_HERMES_WALLET_CMD", text, msg=str(path))
+
+    def test_tty_only_secret_reveal(self):
+        text = (ROOT / "scripts/lib-deps.mjs").read_text(encoding="utf-8")
+        self.assertNotIn("process.stderr.write(lines)", text)
+        self.assertIn("return false", text.lower())
+
+    def test_sign_tool_uses_minimal_env(self):
+        text = (ROOT / "tools/sign_x402.py").read_text(encoding="utf-8")
+        self.assertIn("minimal_subprocess_env", text)
+        self.assertNotIn("os.environ.copy()", text)
+
+    def test_wallet_uses_minimal_env(self):
+        text = (ROOT / "hermes_commands/wallet.py").read_text(encoding="utf-8")
+        self.assertIn("minimal_subprocess_env", text)
+        self.assertNotIn("os.environ.copy()", text)
+
+    def test_pre_tool_call_hook_registered(self):
+        text = (ROOT / "__init__.py").read_text(encoding="utf-8")
+        self.assertIn('register_hook("pre_tool_call"', text)
+        self.assertIn("pre_tool_call_sign_x402", text)
+
+    def test_sign_schema_requires_quote_json(self):
+        text = (ROOT / "__init__.py").read_text(encoding="utf-8")
+        self.assertIn("quote_json", text)
+
     def test_plugin_provides_sign_tool(self):
         text = (ROOT / "plugin.yaml").read_text(encoding="utf-8")
         in_provides = False

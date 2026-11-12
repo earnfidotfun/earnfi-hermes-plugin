@@ -6,7 +6,7 @@ description: >-
 license: MIT
 metadata:
   author: earnfi
-  version: "1.5.0"
+  version: "1.5.1"
   homepage: https://github.com/earnfidotfun/earnfi-hermes-plugin
 ---
 
@@ -31,11 +31,9 @@ Never mix proofs across networks.
 ## Settlement flow (only path)
 
 ```
-1. Paid MCP call WITHOUT payment_signature → 402 + accepts[]
-2. Disclose amount, asset, network; get Hermes approval for the write tool
-3. Obtain payment_signature:
-   - earnfi_sign_x402 (plugin tool; uses settings secrets; returns signature only), OR
-   - user signs off-device and provides payment_signature
+1. Paid MCP call WITHOUT payment_signature → 402 JSON (save full body as quote_json)
+2. Disclose amount, asset, network, payTo; get Hermes approval for the write tool
+3. earnfi_sign_x402(payment_network, quote_json) — triggers Hermes approval (pre_tool_call); returns payment_signature only, OR user signs off-device
 4. Same MCP tool + same args + payment_signature
 5. Success only after EarnFi settled HTTP 200 / confirmed settlement
 ```

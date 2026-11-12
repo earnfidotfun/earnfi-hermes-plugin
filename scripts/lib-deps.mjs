@@ -2,8 +2,8 @@
  * Shared Node helpers for EarnFi Hermes setup/sign scripts.
  *
  * - Dependencies live in the plugin package (package.json + lockfile).
- * - Secrets are revealed once on a real TTY only — never as EARNFI_HERMES_STORE JSON.
- * - Non-TTY (model terminal tools) refuse key generation.
+ * - Secrets are revealed once on the real console device only (/dev/tty or \\.\CON).
+ * - Non-TTY subprocesses (model terminal, gateway) refuse key generation.
  */
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -14,13 +14,67 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const PLUGIN_ROOT = path.resolve(__dirname, '..');
 
+const MINIMAL_ENV_KEYS = new Set([
+  'PATH',
+  'PATHEXT',
+  'HOME',
+  'USERPROFILE',
+  'HOMEDRIVE',
+  'HOMEPATH',
+  'LANG',
+  'LC_ALL',
+  'LC_CTYPE',
+  'SYSTEMROOT',
+  'SystemRoot',
+  'WINDIR',
+  'TEMP',
+  'TMP',
+  'TMPDIR',
+  'APPDATA',
+  'LOCALAPPDATA',
+  'ProgramFiles',
+  'ProgramFiles(x86)',
+  'ComSpec',
+  'NODE_OPTIONS',
+  'npm_config_cache',
+  'npm_config_registry',
+  'npm_config_proxy',
+  'npm_config_https_proxy',
+  'npm_config_userconfig',
+  'HTTP_PROXY',
+  'HTTPS_PROXY',
+  'NO_PROXY',
+  'SOLANA_RPC_URL',
+  'EARNFI_AGENT_API_BASE',
+  'EARNFI_BASE_API_BASE',
+  'EARNFI_OKX_API_BASE',
+  'EARNFI_AGENT_NAME',
+  'SOLANA_SECRET_KEY_B58',
+  'BASE_PRIVATE_KEY',
+  'OKX_PRIVATE_KEY',
+  'NEAR_PRIVATE_KEY',
+  'EARNFI_AGENT_TOKEN',
+]);
+
+export function minimalProcessEnv(extra = {}) {
+  const out = {};
+  for (const key of MINIMAL_ENV_KEYS) {
+    if (process.env[key]) out[key] = process.env[key];
+  }
+  for (const [k, v] of Object.entries(extra)) {
+    if (v !== undefined && v !== null && String(v).trim()) out[k] = String(v);
+  }
+  delete out.EARNFI_HERMES_WALLET_CMD;
+  return out;
+}
+
+/** True only when this Node process has a real TTY (user-owned shell). */
 export function isInteractiveTty() {
   return Boolean(process.stdin.isTTY && process.stdout.isTTY && process.stderr.isTTY);
 }
 
-/** Slash command `/earnfi-wallet` or user-owned shell may show secrets on the real console only. */
-export function mayRevealNewSecret() {
-  return process.env.EARNFI_HERMES_WALLET_CMD === '1' || isInteractiveTty();
+export function canGenerateKeysHere() {
+  return isInteractiveTty();
 }
 
 /** Resolve require() against the plugin root (npm ci / package-lock). */
@@ -59,29 +113,16 @@ export function ensurePluginDeps() {
     cwd: PLUGIN_ROOT,
     stdio: 'inherit',
     shell: false,
-    env: process.env,
+    env: minimalProcessEnv(),
   });
   if (r.error) throw r.error;
   if (r.status !== 0) process.exit(r.status || 1);
 }
 
 /**
- * Write a one-time secret notice to the controlling terminal only.
- * Never print secrets on captured stdout/stderr used by model tools.
+ * Write a one-time secret notice to the controlling console device only.
  */
-export function storeNewSecret(envName, value) {
-  if (!mayRevealNewSecret()) {
-    refuseNonTtyGenerate(envName);
-  }
-  if (!revealSecretOnTty(envName, value)) {
-    refuseNonTtyGenerate(envName);
-  }
-}
-
 export function revealSecretOnTty(envName, value) {
-  if (!mayRevealNewSecret()) {
-    return false;
-  }
   const lines = [
     '',
     '════════════════════════════════════════════════════════════',
@@ -103,9 +144,16 @@ export function revealSecretOnTty(envName, value) {
     }
     return true;
   } catch {
-    // Fallback: only when we already know we have a real TTY attached.
-    process.stderr.write(lines);
-    return true;
+    return false;
+  }
+}
+
+export function storeNewSecret(envName, value) {
+  if (!canGenerateKeysHere()) {
+    refuseNonTtyGenerate(envName);
+  }
+  if (!revealSecretOnTty(envName, value)) {
+    refuseNonTtyGenerate(envName);
   }
 }
 
@@ -115,10 +163,9 @@ export function refuseNonTtyGenerate(envName) {
     error: 'tty_required_for_keygen',
     secret_env: envName,
     guidance: [
-      `Run /earnfi-wallet with the network flag in the Hermes chat input, or`,
-      `run this script yourself in a real terminal (TTY).`,
+      'Run this script in your own OS terminal (not via Hermes terminal tool or /earnfi-wallet on gateway).',
       `Then paste ${envName} into Settings → Plugins → earnfi.`,
-      `Model/terminal tools cannot generate or display private keys.`,
+      'Model/terminal tools cannot generate or display private keys.',
     ],
   };
   console.log(JSON.stringify(out, null, 2));

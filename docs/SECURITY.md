@@ -6,7 +6,7 @@ This plugin:
 
 - Connects to EarnFi over the public internet (`app.earnfi.fun`) via hosted MCP and Agent API
 - Exposes MCP tools that can create jobs, fund escrow and initiate x402 payments after Hermes approval
-- Ships optional Node setup scripts and `/earnfi-wallet` for dedicated agent key generation (signing locally; secrets never in model context)
+- Ships optional Node setup scripts (user-owned terminal only) and `/earnfi-wallet` for register when secrets are already in plugin settings
 - Does not embed credentials
 - Does not ship telemetry
 - Does not patch Hermes core
@@ -26,14 +26,16 @@ Wallet private keys and `agent_token` values are **Hermes-managed secrets** only
 
 - Configured in **Settings → Plugins → earnfi** (`plugin.yaml` optional `type: secret` fields).
 - Setup scripts **never** read or write keystore files, `.env`, `auth.json`, or credential stores on disk.
-- New secrets are shown **once on the user’s real console** (TTY or `/earnfi-wallet`); they are **never** emitted as `EARNFI_HERMES_STORE` JSON in tool output.
+- New secrets are shown **once** on the user’s real console device (`/dev/tty` / `CON`) when scripts run in a user-owned terminal; they are **never** written to captured stdout/stderr or chat.
+- `/earnfi-wallet` does **not** generate keys on gateway or headless hosts; it registers only when the secret is already in plugin settings.
 - The model must **not** run `node scripts/*` via the terminal tool to generate keys.
+- Child Node processes receive a **minimal env** (wallet secret for that call only via Hermes secret scope — not full `os.environ`).
 - Node dependencies install with **`npm ci`** from `package.json` + `package-lock.json` in the plugin root (`node_modules/` is not a secret store).
 
 ## Payments
 
 - Settle spend **only** through EarnFi MCP tools under `trust: untrusted` (Hermes approval).
-- Optional native **`earnfi_sign_x402`** builds `payment_signature` from configured secrets; it returns the signature only, never private keys.
+- Native **`earnfi_sign_x402`** builds `payment_signature` from the full MCP `quote_json`, verifies accepts when possible, and requires **`pre_tool_call` Hermes approval** before signing; it returns the signature only, never private keys.
 - **Do not** use `@earn-fi/agent-client` / CLI / terminal SDK paths from agent skills.
 
 ## Defence in depth

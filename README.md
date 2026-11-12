@@ -60,7 +60,7 @@ Native components include:
 - `/earnfi-help` — commands and workflow guidance
 - `/earnfi-status` — live system diagnostics
 - `/earnfi-smoke` — read-only integration checks
-- `/earnfi-wallet` — create/register wallet (secrets on your console once; paste into plugin settings)
+- `/earnfi-wallet` — register wallet from plugin settings (keygen in your OS terminal only)
 - 13 Hermes-specific workflow skills
 - Pinned Node deps: `package.json` + `package-lock.json` (`npm ci` in plugin root)
 
@@ -111,9 +111,10 @@ hermes plugins doctor . --ci
 
 ## Agent wallet (catalog-safe)
 
-1. `/earnfi-wallet <solana|base|near|okx> --name "Your Agent"` — new keys print **once on your console**.
-2. Paste secrets into **Settings → Plugins → earnfi**.
-3. Use MCP for jobs, marketplace, and x402 (Hermes approval on write tools).
+1. Generate a key in **your OS terminal**: `node scripts/<network>-setup.mjs --name "Your Agent"` (secret prints once on console).
+2. Paste the secret into **Settings → Plugins → earnfi**.
+3. `/earnfi-wallet <solana|base|near|okx> --name "Your Agent"` — register using the saved secret (no keygen on gateway).
+4. Use MCP for jobs, marketplace, and x402 (`earnfi_sign_x402` requires approval; pass full `quote_json` from the 402 response).
 
 ## Payment safety
 

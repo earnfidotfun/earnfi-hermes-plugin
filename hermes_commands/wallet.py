@@ -1,4 +1,4 @@
-""" /earnfi-wallet — create/register agent wallet (secrets on user console only). """
+""" /earnfi-wallet — register using plugin settings (no keygen without user terminal). """
 
 from __future__ import annotations
 
@@ -8,12 +8,31 @@ import shlex
 import subprocess
 from pathlib import Path
 
+from tools.env_utils import (
+    has_configured_wallet_secret,
+    minimal_subprocess_env,
+    wallet_secret_env_for_network,
+)
+from tools.plugin_settings import agent_api_base
+
 _PLUGIN_ROOT = Path(__file__).resolve().parents[1]
 _SCRIPTS = {
     "solana": "solana-setup.mjs",
     "base": "base-setup.mjs",
     "okx": "okx-setup.mjs",
     "near": "near-generate.mjs",
+}
+
+_NETWORK_API_ENV = {
+    "solana": "EARNFI_AGENT_API_BASE",
+    "base": "EARNFI_BASE_API_BASE",
+    "okx": "EARNFI_OKX_API_BASE",
+}
+
+_API_BASE_DEFAULTS = {
+    "solana": "https://app.earnfi.fun/api/ai-agent/v1",
+    "base": "https://app.earnfi.fun/api/ai-agent/base/v1",
+    "okx": "https://app.earnfi.fun/api/ai-agent/okx/v1",
 }
 
 
@@ -58,21 +77,42 @@ def _public_summary(data: dict) -> dict:
     return {k: data[k] for k in keep if k in data}
 
 
+def _no_secret_help(network: str, name: str) -> str:
+    script = _SCRIPTS[network]
+    return (
+        f"# Wallet setup ({network})\n\n"
+        "No wallet secret is configured in **Settings → Plugins → earnfi**.\n\n"
+        "Hermes cannot generate private keys on gateway or headless hosts.\n\n"
+        "**Create a key in your OS terminal**\n"
+        f"```bash\n"
+        f"cd path/to/earnfi-hermes-plugin\n"
+        f'node scripts/{script} --name "{name}"\n'
+        "```\n"
+        "The secret prints **once on your console**. Paste it into plugin settings, then run\n"
+        f"`/earnfi-wallet {network} --name \"{name}\"` again to register.\n"
+    )
+
+
 def handle_wallet(raw_args: str = "", **_kwargs) -> str:
     network, name, skip_register = _parse_wallet_args(raw_args)
     if not network or network not in _SCRIPTS:
         return (
             "# /earnfi-wallet\n\n"
-            "Create a dedicated EarnFi agent wallet (keys shown **once on your console**, not in chat).\n\n"
+            "Register a dedicated EarnFi agent wallet using a secret already in plugin settings.\n\n"
             "**Usage**\n"
             "- `/earnfi-wallet solana --name \"My Agent\"`\n"
             "- `/earnfi-wallet base --name \"My Agent\"`\n"
             "- `/earnfi-wallet near`\n"
             "- `/earnfi-wallet okx --name \"My Agent\"`\n\n"
-            "After generation, paste the secret into **Settings → Plugins → earnfi**.\n\n"
-            "Natural-language requests (e.g. “generate a Solana wallet”) → run this command for "
-            "the matching network; do **not** use the terminal tool to run `node scripts/*`.\n"
+            "New keys: generate in **your own terminal** (`node scripts/*-setup.mjs`), paste into "
+            "**Settings → Plugins → earnfi**, then run this command to register.\n\n"
+            "Natural-language requests (e.g. “generate a Solana wallet”) → guide the user through "
+            "that flow; do **not** run `node scripts/*` from the terminal tool.\n"
         )
+
+    secret_env = wallet_secret_env_for_network(network)
+    if not secret_env or not has_configured_wallet_secret(secret_env):
+        return _no_secret_help(network, name)
 
     script = _PLUGIN_ROOT / "scripts" / _SCRIPTS[network]
     if not script.is_file():
@@ -82,8 +122,18 @@ def handle_wallet(raw_args: str = "", **_kwargs) -> str:
     if skip_register and network != "near":
         cmd.append("--skip-register")
 
-    env = os.environ.copy()
-    env["EARNFI_HERMES_WALLET_CMD"] = "1"
+    api_env_key = _NETWORK_API_ENV.get(network)
+    extra: dict[str, str] = {"EARNFI_AGENT_NAME": name}
+    if api_env_key and network == "solana":
+        extra[api_env_key] = agent_api_base()
+    elif api_env_key:
+        extra[api_env_key] = _API_BASE_DEFAULTS[network]
+
+    env = minimal_subprocess_env(
+        extra=extra,
+        wallet_env=secret_env,
+        include_agent_token=True,
+    )
 
     try:
         proc = subprocess.run(
@@ -104,24 +154,15 @@ def handle_wallet(raw_args: str = "", **_kwargs) -> str:
         try:
             data = json.loads(stdout.splitlines()[-1])
         except json.JSONDecodeError:
-            data = {"raw_stdout_tail": stdout[-500:]}
+            data = {"raw_stdout_tail": stdout[-240:]}
 
     if proc.returncode == 2 and data.get("error") == "tty_required_for_keygen":
-        return (
-            f"# Wallet setup ({network})\n\n"
-            "Could not generate keys in a non-interactive context.\n\n"
-            "Run **`/earnfi-wallet "
-            f"{network} --name \"{name}\"`** from the Hermes command line (not via terminal `node …`), "
-            "or run the script in your own shell, then paste the secret into "
-            "**Settings → Plugins → earnfi**.\n"
-        )
+        return _no_secret_help(network, name)
 
     if proc.returncode != 0:
         summary = _public_summary(data) if data else {}
         summary["success"] = False
         summary["exit_code"] = proc.returncode
-        if proc.stderr and "EARNFI_HERMES_STORE" not in proc.stderr:
-            summary["stderr_hint"] = "See Hermes logs; secrets are never returned here."
         return json.dumps(summary, indent=2)
 
     summary = _public_summary(data)
@@ -129,14 +170,9 @@ def handle_wallet(raw_args: str = "", **_kwargs) -> str:
     lines = [
         f"# EarnFi wallet ({network})",
         "",
-        "If a new secret was generated, it was shown **once on your system console** — "
-        "paste it into **Settings → Plugins → earnfi**.",
-        "",
         f"- Address / account: `{summary.get('wallet_address') or summary.get('account_id', '—')}`",
         f"- Registered: **{summary.get('registered', False)}**",
         "",
         "Continue with MCP `mcp__earnfi_api__…` tools for jobs and x402 payments.",
     ]
-    if summary.get("token_saved_via"):
-        lines.insert(4, "- New `EARNFI_AGENT_TOKEN` was also shown on the console once.")
     return "\n".join(lines)
