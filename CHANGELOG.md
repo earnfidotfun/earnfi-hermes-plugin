@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.5.2 — 2026-11-13
+
+- Fix Hermes load: relative imports in wallet/settings; `provides_hooks: [pre_tool_call]`
+- Hook signature matches Hermes kwargs (`tool_name`, `args`); non-sign tools unchanged
+- x402: allowlisted https replay only; `verify_x402_replay` plugin setting (not tool arg); sign single approved accept
+- `npm ci` uses `npmInstallEnv()` without wallet keys and `--ignore-scripts`
+
 ## 1.5.1 — 2026-11-12
 
 - Wallet: fail closed without `/dev/tty`; remove `EARNFI_HERMES_WALLET_CMD`; `/earnfi-wallet` register-only from plugin settings

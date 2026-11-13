@@ -8,12 +8,12 @@ import shlex
 import subprocess
 from pathlib import Path
 
-from tools.env_utils import (
+from ..tools.env_utils import (
     has_configured_wallet_secret,
     minimal_subprocess_env,
     wallet_secret_env_for_network,
 )
-from tools.plugin_settings import agent_api_base
+from ..tools.plugin_settings import agent_api_base
 
 _PLUGIN_ROOT = Path(__file__).resolve().parents[1]
 _SCRIPTS = {

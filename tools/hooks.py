@@ -10,18 +10,21 @@ from .quote_x402 import format_accept_disclosure, parse_quote_json, pick_accept
 
 logger = logging.getLogger(__name__)
 
-_SIGN_TOOL_NAMES = frozenset({"earnfi_sign_x402", "earnfi:earnfi_sign_x402"})
+_SIGN_TOOL = "earnfi_sign_x402"
 
 
-def pre_tool_call_sign_x402(event: dict[str, Any]) -> dict[str, Any] | None:
-    tool_name = str(event.get("tool_name") or "")
-    bare = tool_name.split(":")[-1]
-    if bare not in _SIGN_TOOL_NAMES:
+def pre_tool_call_sign_x402(
+    tool_name: str = "",
+    args: dict | None = None,
+    **kwargs: Any,
+) -> dict[str, Any] | None:
+    bare = (tool_name or kwargs.get("tool_name") or "").split(":")[-1]
+    if bare != _SIGN_TOOL:
         return None
 
-    args = event.get("args") or {}
-    payment_network = (args.get("payment_network") or args.get("network") or "").strip()
-    quote_raw = args.get("quote_json")
+    a = args or kwargs.get("args") or {}
+    payment_network = (a.get("payment_network") or a.get("network") or "").strip()
+    quote_raw = a.get("quote_json")
     if not payment_network or quote_raw is None:
         return {
             "action": "block",

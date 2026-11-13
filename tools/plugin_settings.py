@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from doctor.checks import DEFAULT_API_BASE, DEFAULT_MCP_URL
+from ..doctor.checks import DEFAULT_API_BASE, DEFAULT_MCP_URL
 
 _PLUGIN_CTX: Any = None
 
@@ -28,3 +28,14 @@ def agent_api_base() -> str:
         if value:
             return str(value).strip().rstrip("/")
     return DEFAULT_API_BASE.rstrip("/")
+
+
+def verify_x402_replay() -> bool:
+    """User/plugin setting only — models cannot disable quote replay."""
+    if _PLUGIN_CTX is not None:
+        value = _PLUGIN_CTX.get_config("verify_x402_replay", True)
+        if isinstance(value, bool):
+            return value
+        if isinstance(value, str):
+            return value.strip().lower() not in ("0", "false", "no", "off")
+    return True

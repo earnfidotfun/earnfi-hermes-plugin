@@ -41,10 +41,6 @@ EARNFI_SIGN_X402_SCHEMA = {
                 "type": "string",
                 "description": "Full JSON body from the EarnFi MCP 402 response (unchanged).",
             },
-            "verify_replay": {
-                "type": "boolean",
-                "description": "When true (default), re-fetch resource URL to confirm accepts[] match.",
-            },
         },
         "required": ["payment_network", "quote_json"],
     },

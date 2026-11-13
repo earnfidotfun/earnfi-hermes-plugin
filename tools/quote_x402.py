@@ -7,6 +7,20 @@ import json
 import urllib.error
 import urllib.request
 from typing import Any
+from urllib.parse import urljoin, urlparse
+
+from .plugin_settings import agent_api_base, mcp_url
+
+_DEFAULT_HOSTS = frozenset({"app.earnfi.fun", "earnfi.fun", "docs.earnfi.fun"})
+
+
+def _allowed_hosts() -> set[str]:
+    hosts = set(_DEFAULT_HOSTS)
+    for raw in (mcp_url(), agent_api_base()):
+        parsed = urlparse(str(raw).strip())
+        if parsed.hostname:
+            hosts.add(parsed.hostname.lower())
+    return hosts
 
 
 def _unwrap_quote_body(raw: dict[str, Any]) -> dict[str, Any]:
@@ -61,25 +75,41 @@ def format_accept_disclosure(accept: dict[str, Any], payment_network: str) -> st
     )
 
 
-def verify_quote_replay(quote: dict[str, Any], payment_network: str) -> None:
-    """When the quote includes a resource URL, re-fetch and require matching accepts."""
+def _earnfi_origin() -> str:
+    parsed = urlparse(mcp_url().strip())
+    if parsed.scheme and parsed.netloc:
+        return f"{parsed.scheme}://{parsed.netloc}"
+    return "https://app.earnfi.fun"
+
+
+def safe_replay_url(quote: dict[str, Any]) -> str | None:
+    """Build an https URL on an allowed EarnFi host — never trust model headers/method."""
     resource = quote.get("resource")
     if not isinstance(resource, dict):
-        return
-    url = (resource.get("url") or resource.get("href") or "").strip()
+        return None
+    raw = (resource.get("url") or resource.get("href") or resource.get("path") or "").strip()
+    if not raw:
+        return None
+    if raw.startswith("/"):
+        raw = urljoin(_earnfi_origin() + "/", raw.lstrip("/"))
+    parsed = urlparse(raw)
+    if parsed.scheme != "https":
+        raise ValueError("quote resource must use https")
+    host = (parsed.hostname or "").lower()
+    if host not in _allowed_hosts():
+        raise ValueError(f"quote resource host {host!r} is not an allowed EarnFi host")
+    return raw
+
+
+def verify_quote_replay(quote: dict[str, Any], payment_network: str, chosen_accept: dict[str, Any]) -> None:
+    """GET the allowlisted EarnFi URL only; require the same single accept fingerprint."""
+    url = safe_replay_url(quote)
     if not url:
         return
-    method = (resource.get("method") or "GET").upper()
-    headers = {"Accept": "application/json"}
-    extra = resource.get("headers")
-    if isinstance(extra, dict):
-        for k, v in extra.items():
-            if isinstance(k, str) and v is not None:
-                headers[k] = str(v)
 
-    req = urllib.request.Request(url, method=method, headers=headers)
+    req = urllib.request.Request(url, method="GET", headers={"Accept": "application/json"})
     try:
-        with urllib.request.urlopen(req, timeout=45) as resp:  # noqa: S310 — user-attested EarnFi quote URL
+        with urllib.request.urlopen(req, timeout=45) as resp:  # noqa: S310
             status = getattr(resp, "status", None) or resp.getcode()
             body = resp.read().decode("utf-8", errors="replace")
     except urllib.error.HTTPError as exc:
@@ -98,18 +128,14 @@ def verify_quote_replay(quote: dict[str, Any], payment_network: str) -> None:
     except json.JSONDecodeError as exc:
         raise ValueError("quote replay body is not JSON") from exc
 
-    local_fp = accepts_fingerprint(quote.get("accepts") or [])
-    fresh_accepts = fresh.get("accepts") or []
-    fresh_fp = accepts_fingerprint(fresh_accepts)
-    if local_fp != fresh_fp:
-        raise ValueError("quote accepts[] no longer match live 402 response")
-
-    pick_accept(fresh, payment_network)
+    fresh_accept = pick_accept(fresh, payment_network)
+    if accepts_fingerprint([chosen_accept]) != accepts_fingerprint([fresh_accept]):
+        raise ValueError("live 402 accept does not match the approved quote")
 
 
-def build_challenge_for_signer(quote: dict[str, Any]) -> dict[str, Any]:
+def build_challenge_for_signer(quote: dict[str, Any], chosen_accept: dict[str, Any]) -> dict[str, Any]:
     return {
         "x402Version": quote.get("x402Version") or quote.get("x402_version") or 2,
-        "accepts": quote.get("accepts") or [],
+        "accepts": [chosen_accept],
         "resource": quote.get("resource"),
     }

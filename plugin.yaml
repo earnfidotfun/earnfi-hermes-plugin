@@ -1,5 +1,5 @@
 name: earnfi
-version: "1.5.1"
+version: "1.5.2"
 description: >-
   Work, Money & Execution Layer for Hermes — hire humans and agents, fund
   real-world work via x402, escrow, and receipts across Solana, Base, NEAR,
@@ -17,6 +17,8 @@ requires_hermes: ">=0.23.0"
 provides_tools:
   - earnfi_doctor
   - earnfi_sign_x402
+provides_hooks:
+  - pre_tool_call
 config_schema:
   mcp_url:
     type: str
@@ -28,6 +30,13 @@ config_schema:
     default: "https://app.earnfi.fun/api/ai-agent/v1"
     label: Agent API base
     description: Agent API base used by diagnostics.
+  verify_x402_replay:
+    type: bool
+    default: true
+    label: Verify x402 quotes against EarnFi
+    description: >-
+      When true, replay 402 resources only on allowlisted https://app.earnfi.fun hosts (GET only).
+      Not controllable from tool arguments.
   solana_secret_key_b58:
     type: secret
     env: SOLANA_SECRET_KEY_B58

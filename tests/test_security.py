@@ -92,6 +92,33 @@ class SecurityTests(unittest.TestCase):
     def test_sign_schema_requires_quote_json(self):
         text = (ROOT / "__init__.py").read_text(encoding="utf-8")
         self.assertIn("quote_json", text)
+        self.assertNotIn("verify_replay", text)
+
+    def test_plugin_yaml_provides_hooks(self):
+        text = (ROOT / "plugin.yaml").read_text(encoding="utf-8")
+        self.assertIn("pre_tool_call", text)
+
+    def test_wallet_uses_relative_imports(self):
+        text = (ROOT / "hermes_commands/wallet.py").read_text(encoding="utf-8")
+        self.assertIn("from ..tools.", text)
+        self.assertNotIn("from tools.", text)
+
+    def test_plugin_settings_uses_relative_doctor_import(self):
+        text = (ROOT / "tools/plugin_settings.py").read_text(encoding="utf-8")
+        self.assertIn("from ..doctor.checks", text)
+        self.assertNotIn("from doctor.", text)
+
+    def test_npm_install_env_excludes_wallet_keys(self):
+        text = (ROOT / "scripts/lib-deps.mjs").read_text(encoding="utf-8")
+        self.assertIn("npmInstallEnv", text)
+        self.assertIn("--ignore-scripts", text)
+        npm_block = text.split("NPM_INSTALL_ENV_KEYS")[1].split("SCRIPT_RUNTIME_ENV_KEYS")[0]
+        self.assertNotIn("BASE_PRIVATE_KEY", npm_block)
+
+    def test_hook_accepts_keyword_tool_name(self):
+        text = (ROOT / "tools/hooks.py").read_text(encoding="utf-8")
+        self.assertIn("tool_name: str", text)
+        self.assertNotIn("event: dict", text)
 
     def test_plugin_provides_sign_tool(self):
         text = (ROOT / "plugin.yaml").read_text(encoding="utf-8")

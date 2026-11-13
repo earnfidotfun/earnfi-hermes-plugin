@@ -14,7 +14,7 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const PLUGIN_ROOT = path.resolve(__dirname, '..');
 
-const MINIMAL_ENV_KEYS = new Set([
+const NPM_INSTALL_ENV_KEYS = new Set([
   'PATH',
   'PATHEXT',
   'HOME',
@@ -44,21 +44,30 @@ const MINIMAL_ENV_KEYS = new Set([
   'HTTP_PROXY',
   'HTTPS_PROXY',
   'NO_PROXY',
+]);
+
+const SCRIPT_RUNTIME_ENV_KEYS = new Set([
+  ...NPM_INSTALL_ENV_KEYS,
   'SOLANA_RPC_URL',
   'EARNFI_AGENT_API_BASE',
   'EARNFI_BASE_API_BASE',
   'EARNFI_OKX_API_BASE',
   'EARNFI_AGENT_NAME',
-  'SOLANA_SECRET_KEY_B58',
-  'BASE_PRIVATE_KEY',
-  'OKX_PRIVATE_KEY',
-  'NEAR_PRIVATE_KEY',
-  'EARNFI_AGENT_TOKEN',
 ]);
 
+/** npm ci only — never pass wallet secrets into install scripts. */
+export function npmInstallEnv() {
+  const out = {};
+  for (const key of NPM_INSTALL_ENV_KEYS) {
+    if (process.env[key]) out[key] = process.env[key];
+  }
+  return out;
+}
+
+/** Node setup/sign scripts — secrets only via explicit ``extra`` from the plugin parent. */
 export function minimalProcessEnv(extra = {}) {
   const out = {};
-  for (const key of MINIMAL_ENV_KEYS) {
+  for (const key of SCRIPT_RUNTIME_ENV_KEYS) {
     if (process.env[key]) out[key] = process.env[key];
   }
   for (const [k, v] of Object.entries(extra)) {
@@ -107,13 +116,13 @@ export function ensurePluginDeps() {
   }
   const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';
   const args = fs.existsSync(lock)
-    ? ['ci', '--omit=dev', '--no-fund', '--no-audit']
-    : ['install', '--omit=dev', '--no-fund', '--no-audit'];
+    ? ['ci', '--omit=dev', '--no-fund', '--no-audit', '--ignore-scripts']
+    : ['install', '--omit=dev', '--no-fund', '--no-audit', '--ignore-scripts'];
   const r = spawnSync(npmCmd, args, {
     cwd: PLUGIN_ROOT,
     stdio: 'inherit',
     shell: false,
-    env: minimalProcessEnv(),
+    env: npmInstallEnv(),
   });
   if (r.error) throw r.error;
   if (r.status !== 0) process.exit(r.status || 1);

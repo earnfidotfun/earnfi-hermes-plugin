@@ -7,6 +7,7 @@ import subprocess
 from pathlib import Path
 
 from .env_utils import minimal_subprocess_env, wallet_secret_env_for_payment_network
+from .plugin_settings import verify_x402_replay
 from .quote_x402 import (
     build_challenge_for_signer,
     parse_quote_json,
@@ -36,10 +37,10 @@ def earnfi_sign_x402(args: dict, **_kwargs) -> str:
             if isinstance(quote_raw, dict)
             else parse_quote_json(str(quote_raw))
         )
-        pick_accept(quote, payment_network)
-        if a.get("verify_replay", True):
-            verify_quote_replay(quote, payment_network)
-        challenge = build_challenge_for_signer(quote)
+        chosen = pick_accept(quote, payment_network)
+        if verify_x402_replay():
+            verify_quote_replay(quote, payment_network, chosen)
+        challenge = build_challenge_for_signer(quote, chosen)
     except (ValueError, json.JSONDecodeError) as exc:
         return json.dumps({"success": False, "error": "invalid_quote", "detail": str(exc)})
 
